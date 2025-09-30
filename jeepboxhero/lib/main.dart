@@ -51,15 +51,15 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     final logoHeight = logoWidth * 0.8;
     final logoStartX = size.width * 0.5 - logoWidth / 2;
     final logoEndX = size.width * 0.65 - logoWidth / 2;
-    final logoY = size.height * 0.05;
+    final logoY = size.height * 0.1;
 
-    // Button layout (flush left, smaller size)
-    final buttonWidth = size.width * 0.35; // 35% of screen width
-    final buttonHeight = size.height * 0.1; // 10% of screen height
+    // Button layout (1.5x bigger + closer)
+    final buttonWidth = size.width * 0.6; // 60% of screen width
+    final buttonHeight = size.height * 0.18; // 18% of screen height
     final buttonTargetX = size.width * 0.05; // margin from left edge
     final buttonStartX = -buttonWidth; // slide in from off-screen
-    final buttonStartY = size.height * 0.25;
-    final buttonSpacing = size.height * 0.06;
+    final buttonStartY = size.height * 0.2;
+    final buttonSpacing = size.height * 0.045; // closer spacing
 
     return Scaffold(
       body: Stack(
