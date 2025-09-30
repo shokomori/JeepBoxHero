@@ -9,14 +9,16 @@ val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
         .get()
-rootProject.layout.buildDirectory.value(newBuildDir)
+
+// ✅ use .set() instead of .value()
+rootProject.layout.buildDirectory.set(newBuildDir)
 
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    project.layout.buildDirectory.set(newSubprojectBuildDir)
+
+    // keep evaluation order
+    evaluationDependsOn(":app")
 }
 
 tasks.register<Delete>("clean") {
