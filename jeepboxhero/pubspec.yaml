@@ -20,12 +20,5 @@ flutter:
   
   # Add your assets here:
   assets:
-    - assets/albums/
-    - assets/customers/
     - assets/audio/
-    - assets/backgrounds/
-    
-  fonts:
-    - family: Courier
-      fonts:
-        - asset: fonts/CourierPrime-Regular.ttf
+    - assets/images/
