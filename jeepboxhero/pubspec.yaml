@@ -3,13 +3,14 @@ description: A narrative-driven OPM vinyl shop simulation
 version: 1.0.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flame: ^1.18.0
-  
+  flame_audio: ^2.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -17,8 +18,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
-  # Add your assets here:
+
   assets:
     - assets/audio/
-    - assets/images/
+    - assets/ui/
+    - assets/backgrounds/
+    # Uncomment this if your images are inside assets/images/
+    # - assets/images/

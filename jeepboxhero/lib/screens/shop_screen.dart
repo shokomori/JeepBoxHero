@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../components/shop/record_shelf.dart';
-import '../components/ui/dialogue_box.dart' as dialogue;
+import '../components/ui/dialogue_box.dart';
 import '../components/ui/record_viewer.dart';
 import '../components/ui/cart_menu.dart';
 import '../components/ui/receipt_book.dart';
@@ -13,10 +13,10 @@ import '../managers/game_state_manager.dart';
 class ShopScreen extends PositionComponent with HasGameRef {
   late RecordShelf recordShelf;
   Customer? currentCustomer;
-  dialogue.DialogueBox? dialogueBox;
+  DialogueBox? dialogueBox;
   RecordViewer? recordViewer;
   CartMenu? cartMenu;
-  RecordViewer? receiptBook;
+  ReceiptBook? receiptBook;
 
   final List<AlbumData> cartItems = [];
   CustomerData? currentCustomerData;
@@ -152,10 +152,13 @@ class ShopScreen extends PositionComponent with HasGameRef {
     hideDialogue();
 
     // Show receipt book
-  receiptBook = RecordViewer(
-      album: AlbumDatabase.albums[0], // Use the first album as a placeholder
+    receiptBook = ReceiptBook(
+      purchasedAlbums: cartItems,
       position: Vector2(gameRef.size.x / 2 - 200, gameRef.size.y / 2 - 250),
       size: Vector2(400, 500),
+      onComplete: () {
+        _completeTransaction();
+      },
     );
 
     add(receiptBook!);
@@ -219,7 +222,7 @@ class ShopScreen extends PositionComponent with HasGameRef {
   void showDialogue(String text, VoidCallback? onComplete) {
     dialogueBox?.removeFromParent();
 
-  dialogueBox = dialogue.DialogueBox(
+    dialogueBox = DialogueBox(
       text: text,
       position: Vector2(20, gameRef.size.y - 120),
       size: Vector2(gameRef.size.x - 40, 100),
