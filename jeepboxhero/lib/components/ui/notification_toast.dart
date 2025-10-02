@@ -7,6 +7,10 @@ class NotificationToast extends PositionComponent {
   final double duration;
 
   double elapsed = 0;
+  double opacity = 1.0;
+
+  late RectangleComponent bg;
+  late RectangleComponent border;
 
   NotificationToast({
     required this.message,
@@ -17,20 +21,18 @@ class NotificationToast extends PositionComponent {
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
-
     // Background
-    final bg = RectangleComponent(
+    bg = RectangleComponent(
       size: size,
-      paint: Paint()..color = backgroundColor,
+      paint: Paint()..color = backgroundColor.withOpacity(opacity),
     );
     await add(bg);
 
     // Border
-    final border = RectangleComponent(
+    border = RectangleComponent(
       size: size,
       paint: Paint()
-        ..color = Colors.white
+        ..color = Colors.white.withOpacity(opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -55,13 +57,17 @@ class NotificationToast extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
-
     elapsed += dt;
 
     // Fade out animation
     if (elapsed >= duration - 0.5) {
       final fadeAlpha = 1 - ((elapsed - (duration - 0.5)) / 0.5);
       opacity = fadeAlpha.clamp(0.0, 1.0);
+      // Update opacity of background and border
+      if (bg.paint.color.opacity != opacity) {
+        bg.paint.color = backgroundColor.withOpacity(opacity);
+        border.paint.color = Colors.white.withOpacity(opacity);
+      }
     }
 
     if (elapsed >= duration) {

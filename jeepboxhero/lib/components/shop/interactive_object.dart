@@ -14,7 +14,7 @@ class InteractiveObject extends PositionComponent with TapCallbacks {
   final InteractiveType type;
   final String description;
   final VoidCallback? onInteract;
-  
+
   InteractiveObject({
     required this.type,
     required this.description,
@@ -22,18 +22,18 @@ class InteractiveObject extends PositionComponent with TapCallbacks {
     required Vector2 size,
     this.onInteract,
   }) : super(position: position, size: size);
-  
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    
+
     // Object visual representation
     final bg = RectangleComponent(
       size: size,
       paint: Paint()..color = _getObjectColor(),
     );
     await add(bg);
-    
+
     // Icon
     final icon = TextComponent(
       text: _getObjectIcon(),
@@ -48,7 +48,7 @@ class InteractiveObject extends PositionComponent with TapCallbacks {
     );
     await add(icon);
   }
-  
+
   Color _getObjectColor() {
     switch (type) {
       case InteractiveType.tamagotchi:
@@ -63,7 +63,7 @@ class InteractiveObject extends PositionComponent with TapCallbacks {
         return const Color(0xFFF39C12);
     }
   }
-  
+
   String _getObjectIcon() {
     switch (type) {
       case InteractiveType.tamagotchi:
@@ -78,9 +78,10 @@ class InteractiveObject extends PositionComponent with TapCallbacks {
         return '🕐';
     }
   }
-  
+
   @override
   void onTapDown(TapDownEvent event) {
     onInteract?.call();
     print('Interacted with: $description');
   }
+}

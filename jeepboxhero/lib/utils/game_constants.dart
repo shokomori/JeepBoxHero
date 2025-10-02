@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class GameConstants {
   // Colors
   static const Color primaryColor = Color(0xFF2C3E50);
@@ -6,21 +8,21 @@ class GameConstants {
   static const Color successColor = Color(0xFF27AE60);
   static const Color warningColor = Color(0xFFF39C12);
   static const Color backgroundColor = Color(0xFFFFF8E7);
-  
+
   // Timing
   static const double dialogueCharDelay = 0.03;
   static const double customerSpawnDelay = 3.0;
   static const double notificationDuration = 2.0;
-  
+
   // Layout
   static const double recordWidth = 120.0;
   static const double recordHeight = 180.0;
   static const int recordsPerRow = 4;
-  
+
   // Prices (for random generation if needed)
   static const double minPrice = 350.0;
   static const double maxPrice = 650.0;
-  
+
   // Game progression
   static const int customersPerDay = 5;
   static const int daysToComplete = 7;
@@ -80,3 +82,4 @@ AlbumData(
     ),
   ],
 ),
+*/

@@ -23,5 +23,6 @@ flutter:
     - assets/audio/
     - assets/ui/
     - assets/backgrounds/
-    # Uncomment this if your images are inside assets/images/
-    # - assets/images/
+    - assets/albums/
+    - assets/customers/
+    - assets/data/

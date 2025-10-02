@@ -41,7 +41,7 @@ class Review {
 // Sample OPM albums (you'll expand this with your data)
 class AlbumDatabase {
   static final List<AlbumData> albums = [
-    AlbumData(
+    const AlbumData(
       id: 'eraserheads_circus',
       title: 'Circus',
       artist: 'Eraserheads',
@@ -79,7 +79,7 @@ class AlbumDatabase {
         ),
       ],
     ),
-    AlbumData(
+    const AlbumData(
       id: 'rivermaya_trip',
       title: 'Trip',
       artist: 'Rivermaya',
