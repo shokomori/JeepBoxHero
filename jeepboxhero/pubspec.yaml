@@ -1,28 +1,26 @@
-name: jeep_box_hero
-description: A narrative-driven OPM vinyl shop simulation
-version: 1.0.0
+name: jeepboxhero
+description: A record shop simulation game
+
+publish_to: 'none'
+version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flame: ^1.18.0
-  flame_audio: ^2.1.4
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
-
+  
   assets:
-    - assets/audio/
-    - assets/ui/
     - assets/backgrounds/
-    - assets/albums/
-    - assets/customers/
-    - assets/data/
+    - assets/ui/
+    - assets/characters/

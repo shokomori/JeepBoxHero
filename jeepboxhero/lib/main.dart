@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'screens/shop_screen.dart'; // Import shop screen
 
 void main() {
   runApp(const JeepBoxApp());
@@ -12,7 +13,10 @@ class JeepBoxApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Jeep Box Hero',
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        fontFamily: 'Courier',
+      ),
       home: const MainMenuScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -141,10 +145,11 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       return;
     }
 
+    // Navigate to ShopScreen instead of GameScreen
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const GameScreen(),
+            ShopScreen(), // Removed const
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -313,23 +318,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Game Screen")),
-      body: const Center(
-        child: Text(
-          "Game starts here!",
-          style: TextStyle(fontSize: 24),
-        ),
       ),
     );
   }
