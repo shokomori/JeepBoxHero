@@ -1,0 +1,573 @@
+// lib/screens/shelves_screen.dart
+import 'package:flutter/material.dart';
+
+class ShelvesScreen extends StatefulWidget {
+  const ShelvesScreen({super.key});
+
+  @override
+  State<ShelvesScreen> createState() => _ShelvesScreenState();
+}
+
+class _ShelvesScreenState extends State<ShelvesScreen> {
+  int _currentShelfIndex = 0;
+  final int _totalShelves = 4;
+  int? _highlightedAlbumIndex;
+
+  // Shelf backgrounds and clickable album positions
+  final List<Map<String, dynamic>> _shelvesData = [
+    {
+      'label': 'First Shelf',
+      'background': 'assets/shelves/loc1_all.png',
+      'albums': [
+        {
+          'title': 'Kitchie Nadal',
+          'artist': 'Kitchie Nadal',
+          'year': '2004',
+          'cover': 'albums/kitchie_nadal.png',
+          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Yo!',
+          'artist': 'Francis M.',
+          'year': '2012',
+          'cover': 'albums/francism_yo.png',
+          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Malaya',
+          'artist': 'Moira Dela Torre',
+          'year': '2018',
+          'cover': 'albums/moira_malaya.png',
+          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+      ],
+    },
+    {
+      'label': 'Second Shelf',
+      'background': 'assets/shelves/loc2_all.png',
+      'albums': [
+        {
+          'title': 'Lea Salonga',
+          'artist': 'Lea Salonga',
+          'year': '1993',
+          'cover': 'albums/lea_salonga.png',
+          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Mga Kwento ng Makata',
+          'artist': 'Gloc-9',
+          'year': '2012',
+          'cover': 'albums/gloc9_kwento.png',
+          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+      ],
+    },
+    {
+      'label': 'Third Shelf',
+      'background': 'assets/shelves/loc3_all.png',
+      'albums': [
+        {
+          'title': 'Unang Putok',
+          'artist': 'Sexbomb Girls',
+          'year': '2002',
+          'cover': 'albums/sexbomb_unang.png',
+          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Your Universe',
+          'artist': 'Rico Blanco',
+          'year': '2008',
+          'cover': 'albums/rico_your_universe.png',
+          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'R2K',
+          'artist': 'Regine Velasquez',
+          'year': '1999',
+          'cover': 'albums/regine_r2k.png',
+          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+      ],
+    },
+    {
+      'label': 'Fourth Shelf',
+      'background': 'assets/shelves/loc4_all.png',
+      'albums': [
+        {
+          'title': 'CLAPCLAPCLAP!',
+          'artist': 'IV of Spades',
+          'year': '2018',
+          'cover': 'albums/ivspades_clap.png',
+          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Talaarawan',
+          'artist': 'BINI',
+          'year': '2024',
+          'cover': 'albums/bini_talaarawan.png',
+          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'Silakbo',
+          'artist': 'Cup of Joe',
+          'year': '2025',
+          'cover': 'albums/cupjoe_silakbo.png',
+          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+        {
+          'title': 'UDD',
+          'artist': 'Up Dharma Down',
+          'year': '2019',
+          'cover': 'albums/udd_album.png',
+          'isTarget': true,
+          'position': {'left': 0.56, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+        },
+      ],
+    },
+  ];
+
+  void _goToPreviousShelf() {
+    if (_currentShelfIndex > 0) {
+      setState(() {
+        _currentShelfIndex--;
+        _highlightedAlbumIndex = null;
+      });
+    }
+  }
+
+  void _goToNextShelf() {
+    if (_currentShelfIndex < _totalShelves - 1) {
+      setState(() {
+        _currentShelfIndex++;
+        _highlightedAlbumIndex = null;
+      });
+    }
+  }
+
+  void _onAlbumTap(Map<String, dynamic> album, int index) {
+    debugPrint(
+        'Album tapped: ${album['title']}, isTarget: ${album['isTarget']}');
+
+    setState(() {
+      _highlightedAlbumIndex = index;
+    });
+
+    // Brief highlight before showing dialog
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        if (album['isTarget'] == true) {
+          debugPrint('Showing SUCCESS dialog');
+          _showSuccessDialog(album);
+        } else {
+          debugPrint('Showing WRONG album dialog');
+          _showWrongAlbumDialog(album);
+        }
+      }
+    });
+  }
+
+  void _showSuccessDialog(Map<String, dynamic> album) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white.withOpacity(0.95),
+        title: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green[700], size: 32),
+            const SizedBox(width: 8),
+            const Text('Found it!',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '[Narration]',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'You scan the rows of vinyl until your hand lands on a sleek black-and-white cover with UDD embossed across it. Carefully, you lift it out and walk it over.',
+                style: TextStyle(fontSize: 15, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Tito Ramon (nodding approvingly):',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '"There you go. Eyes sharp, hands steady. This one marks the band\'s evolution—less spectacle, more intimacy. Fans call it the sound of moving on."',
+                style: TextStyle(
+                    fontSize: 15, height: 1.4, fontStyle: FontStyle.italic),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              debugPrint('Success button pressed - returning true');
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context, true); // Return to shop with success flag
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.green[700],
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: const Text(
+              'Bring it to Tito Ramon →',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showWrongAlbumDialog(Map<String, dynamic> album) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.info_outline, color: Colors.orange[700], size: 32),
+            const SizedBox(width: 8),
+            const Text('Not quite...'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This is "${album['title']}" by ${album['artist']} (${album['year']})',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'But you\'re looking for UDD by Up Dharma Down. '
+              'Remember, check under "U"!',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _highlightedAlbumIndex = null;
+              });
+            },
+            child: const Text('Keep looking', style: TextStyle(fontSize: 16)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildClickableAlbum(
+      Map<String, dynamic> album, Size screenSize, int index) {
+    final position = album['position'];
+    final isHighlighted = _highlightedAlbumIndex == index;
+
+    return Positioned(
+      left: screenSize.width * position['left'],
+      top: screenSize.height * position['top'],
+      width: screenSize.width * position['width'],
+      height: screenSize.height * position['height'],
+      child: GestureDetector(
+        onTap: () => _onAlbumTap(album, index),
+        child: Container(
+          decoration: BoxDecoration(
+            border: isHighlighted
+                ? Border.all(color: Colors.amber, width: 4)
+                : null,
+            boxShadow: isHighlighted
+                ? [
+                    BoxShadow(
+                      color: Colors.amber.withOpacity(0.6),
+                      blurRadius: 15,
+                      spreadRadius: 3,
+                    )
+                  ]
+                : null,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIcon(String assetPath, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Image.asset(
+        assetPath,
+        width: 60,
+        height: 60,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.amber,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.image_not_supported, color: Colors.white),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBottomAlbumPreview(
+      Map<String, dynamic> album, Size size, int index) {
+    final isHighlighted = _highlightedAlbumIndex == index;
+
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 500 + (index * 100)),
+      tween: Tween(begin: 1.0, end: 0.0),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, size.height * 0.3 * value),
+          child: Opacity(
+            opacity: 1.0 - value,
+            child: child,
+          ),
+        );
+      },
+      child: GestureDetector(
+        onTap: () => _onAlbumTap(album, index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: size.width * 0.18,
+          height: size.width * 0.18,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: isHighlighted
+                ? Border.all(color: Colors.amber, width: 4)
+                : Border.all(color: Colors.white54, width: 2),
+            boxShadow: isHighlighted
+                ? [
+                    BoxShadow(
+                      color: Colors.amber.withOpacity(0.6),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    )
+                  ]
+                : null,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Image.asset(
+              album['cover'],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.black.withOpacity(0.3),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.album, color: Colors.white70, size: 32),
+                      const SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          album['artist'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final currentShelf = _shelvesData[_currentShelfIndex];
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Full screen shelf background
+          Positioned.fill(
+            child: Image.asset(
+              currentShelf['background'],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: const Color(0xFF8B7355),
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image_not_supported,
+                            size: 64, color: Colors.white54),
+                        SizedBox(height: 16),
+                        Text(
+                          'Shelf image not found',
+                          style: TextStyle(color: Colors.white70, fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Clickable album hotspots
+          ...List.generate(
+            currentShelf['albums'].length,
+            (index) => _buildClickableAlbum(
+              currentShelf['albums'][index],
+              size,
+              index,
+            ),
+          ),
+
+          // Top left icons
+          Positioned(
+            left: 16,
+            top: 16,
+            child: Row(
+              children: [
+                _buildIcon('assets/ui/settings_icon.png',
+                    () => debugPrint('Settings')),
+                const SizedBox(width: 12),
+                _buildIcon(
+                    'assets/ui/tablet_icon.png', () => debugPrint('Tablet')),
+              ],
+            ),
+          ),
+
+          // Top right icons
+          Positioned(
+            right: 16,
+            top: 16,
+            child: Row(
+              children: [
+                _buildIcon('assets/ui/cart_icon.png', () => debugPrint('Cart')),
+                const SizedBox(width: 12),
+                _buildIcon(
+                    'assets/ui/records_icon.png', () => debugPrint('Records')),
+              ],
+            ),
+          ),
+
+          // Left arrow button
+          Positioned(
+            left: 16,
+            top: size.height * 0.48,
+            child: GestureDetector(
+              onTap: _currentShelfIndex > 0 ? _goToPreviousShelf : null,
+              child: Opacity(
+                opacity: _currentShelfIndex > 0 ? 1.0 : 0.3,
+                child: Image.asset(
+                  'assets/ui/left_arrow.png',
+                  width: 80,
+                  height: 80,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back,
+                          size: 40, color: Colors.white),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // Right arrow button
+          Positioned(
+            right: 16,
+            top: size.height * 0.48,
+            child: GestureDetector(
+              onTap: _currentShelfIndex < _totalShelves - 1
+                  ? _goToNextShelf
+                  : null,
+              child: Opacity(
+                opacity: _currentShelfIndex < _totalShelves - 1 ? 1.0 : 0.3,
+                child: Image.asset(
+                  'assets/ui/right_arrow.png',
+                  width: 80,
+                  height: 80,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_forward,
+                          size: 40, color: Colors.white),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom album previews with actual album covers
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 20,
+            child: Center(
+              child: Wrap(
+                spacing: size.width * 0.03,
+                alignment: WrapAlignment.center,
+                children: List.generate(
+                  currentShelf['albums'].length,
+                  (index) => _buildBottomAlbumPreview(
+                    currentShelf['albums'][index],
+                    size,
+                    index,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
