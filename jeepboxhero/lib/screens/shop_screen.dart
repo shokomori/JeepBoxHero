@@ -1,6 +1,9 @@
 // lib/screens/shop_screen.dart
 import 'package:flutter/material.dart';
+import '../managers/game_state.dart';
 import './shelves_screen.dart';
+import 'package:jeepboxhero/screens/records_screen.dart';
+import 'package:jeepboxhero/screens/cart_screen.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -178,6 +181,13 @@ class _ShopScreenState extends State<ShopScreen> {
     final artist = _artistController.text.trim().toLowerCase();
 
     if (album == 'udd' && artist == 'up dharma down') {
+      // Add to records collection
+      GameState.addRecord({
+        'album': 'UDD',
+        'artist': 'Up Dharma Down',
+        'imagePath': 'assets/albums/udd_album.png',
+      });
+
       setState(() {
         _showReceiptBook = false;
       });
@@ -261,20 +271,14 @@ class _ShopScreenState extends State<ShopScreen> {
             const SizedBox(height: 8),
             const Text(
               'Jeep Box Records',
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-              ),
+              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
             ),
             const Divider(height: 32, thickness: 2),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Transaction Details:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 16),
@@ -320,10 +324,7 @@ class _ShopScreenState extends State<ShopScreen> {
                       vertical: 16,
                     ),
                   ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: const Text('Cancel', style: TextStyle(fontSize: 16)),
                 ),
                 ElevatedButton(
                   onPressed: _submitReceipt,
@@ -429,9 +430,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey[400],
-                      child: const Center(
-                        child: Icon(Icons.album, size: 64),
-                      ),
+                      child: const Center(child: Icon(Icons.album, size: 64)),
                     );
                   },
                 ),
@@ -450,9 +449,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.white,
-                      child: const Center(
-                        child: Icon(Icons.receipt, size: 64),
-                      ),
+                      child: const Center(child: Icon(Icons.receipt, size: 64)),
                     );
                   },
                 ),
@@ -600,89 +597,171 @@ class _ShopScreenState extends State<ShopScreen> {
                 ),
               ),
 
-            // Top left icons
+            // Top left: Back arrow only
             if (!_showReceiptBook && !_showReceipt)
               Positioned(
                 left: 16,
                 top: 16,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => debugPrint('Settings'),
-                      child: Image.asset(
-                        'assets/ui/settings_icon.png',
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                  child: Image.asset(
+                    'assets/ui/back_arrow.png',
+                    width: w * 0.055,
+                    height: w * 0.055,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
                         width: w * 0.055,
                         height: w * 0.055,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.settings);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () => debugPrint('Tablet'),
-                      child: Image.asset(
-                        'assets/ui/tablet_icon.png',
-                        width: w * 0.055,
-                        height: w * 0.055,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.tablet);
-                        },
-                      ),
-                    ),
-                  ],
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.arrow_back, size: 30),
+                      );
+                    },
+                  ),
                 ),
               ),
 
-            // Top right icons
+            // Top right: Cart and Records icons with badges
             if (!_showReceiptBook && !_showReceipt)
               Positioned(
                 right: 16,
                 top: 16,
                 child: Row(
                   children: [
+                    // Cart icon with badge
                     GestureDetector(
-                      onTap: () => debugPrint('Cart'),
-                      child: Image.asset(
-                        'assets/ui/cart_icon.png',
-                        width: w * 0.055,
-                        height: w * 0.055,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.shopping_cart);
-                        },
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CartScreen()),
+                        );
+                        setState(() {}); // Refresh to update badge
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Image.asset(
+                            'assets/ui/cart_icon.png',
+                            width: w * 0.055,
+                            height: w * 0.055,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: w * 0.055,
+                                height: w * 0.055,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.shopping_cart,
+                                  size: 30,
+                                ),
+                              );
+                            },
+                          ),
+                          if (GameState.cartItems.isNotEmpty)
+                            Positioned(
+                              right: -6,
+                              top: -6,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
+                                ),
+                                child: Text(
+                                  '${GameState.cartItems.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Records icon with badge
                     GestureDetector(
-                      onTap: () => debugPrint('Records'),
-                      child: Image.asset(
-                        'assets/ui/records_icon.png',
-                        width: w * 0.055,
-                        height: w * 0.055,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.library_music);
-                        },
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecordsScreen(),
+                          ),
+                        );
+                        setState(() {}); // Refresh to update badge
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Image.asset(
+                            'assets/ui/records_icon.png',
+                            width: w * 0.055,
+                            height: w * 0.055,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: w * 0.055,
+                                height: w * 0.055,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.library_music,
+                                  size: 30,
+                                ),
+                              );
+                            },
+                          ),
+                          if (GameState.records.isNotEmpty)
+                            Positioned(
+                              right: -6,
+                              top: -6,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[700],
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
+                                ),
+                                child: Text(
+                                  '${GameState.records.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-
-            // Back arrow
-            if (!_showReceiptBook && !_showReceipt)
-              Positioned(
-                left: 16,
-                top: h * 0.48,
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).maybePop(),
-                  child: Image.asset(
-                    'assets/ui/back_arrow.png',
-                    width: w * 0.075,
-                    height: w * 0.075,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.arrow_back, size: 48);
-                    },
-                  ),
                 ),
               ),
           ],
