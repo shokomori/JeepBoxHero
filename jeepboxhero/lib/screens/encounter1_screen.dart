@@ -1,81 +1,57 @@
-// ============================================
-// FILE 1: shop_screen.dart (Tutorial)
-// ============================================
-// lib/screens/shop_screen.dart
+// lib/screens/encounter1_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
-import './encounter1_screen.dart';
 
-class ShopScreen extends StatefulWidget {
-  const ShopScreen({super.key});
+class Encounter1Screen extends StatefulWidget {
+  const Encounter1Screen({super.key});
 
   @override
-  State<ShopScreen> createState() => _ShopScreenState();
+  State<Encounter1Screen> createState() => _Encounter1ScreenState();
 }
 
-class _ShopScreenState extends State<ShopScreen> {
+class _Encounter1ScreenState extends State<Encounter1Screen> {
   int _dialogueIndex = 0;
   bool _showContinue = false;
   bool _albumFound = false;
   bool _transactionComplete = false;
   bool _customerExiting = false;
+  String? _selectedOption;
 
   final List<Map<String, dynamic>> _dialogues = [
     {
       'type': 'narration',
       'text':
-          '[Scene: Inside the shop]\n\nStacks of vinyls and cassettes line the dusty shelves. Posters of old OPM bands cling to the walls. A guitar leans quietly in the corner.',
+          '[Scene: Jeep Box Records – Hip-Hop Section]\n\nA man in baggy jeans and a snapback bounces into the shop, his steps like a freestyle beat. He throws a playful salute to Tito Ramon.',
       'speaker': null,
     },
     {
       'type': 'dialogue',
       'text':
-          'Ah, you made it! Welcome to Jeep Box Records. Back in my day, this place was more than just a shop. It was a stage. Every record here has a story, and today, you\'ll help me keep those stories alive.',
-      'speaker': 'Tito Ramon',
-    },
-    {
-      'type': 'player',
-      'text':
-          'I\'ve never worked in a record shop before… I don\'t even know where to start.',
-      'speaker': 'You',
+          'Yo! Still standing, Jeep Box! Back in the day, this place spun the soundtrack to my first battles. There\'s one record I need again—Tagalog verses slicing through English beats, fire and pride all in one. First of its kind.',
+      'speaker': 'MC Luwalhati (grinning)',
     },
     {
       'type': 'dialogue',
       'text':
-          'Don\'t worry. Music has a way of teaching. Some customers will come looking for the hits, others for the hidden gems. Your job is simple: listen, learn, and help them find the soundtrack to their lives.',
-      'speaker': 'Tito Ramon',
+          'Francis M would\'ve liked you, kid. Always rhyming like the streets were your stage.',
+      'speaker': 'Tito Ramon (smiling)',
     },
+    {
+      'type': 'dialogue',
+      'text':
+          'All I remember is the cover—loud, bold, like it was daring you to press play. That\'s the album that lit my fire.',
+      'speaker': 'MC Luwalhati (laughing)',
+    },
+  ];
+
+  final List<Map<String, dynamic>> _postChoiceDialogues = [
     {
       'type': 'narration',
       'text':
-          '[Tito Ramon hands you a faded receipt book and points to the shelves.]',
-      'speaker': null,
-    },
-    {
-      'type': 'dialogue',
-      'text':
-          'Now, go on. Let\'s see if you\'ve got the rhythm for this place.',
-      'speaker': 'Tito Ramon',
-    },
-    {
-      'type': 'dialogue',
-      'text':
-          'Alright, rookie. First lesson\'s on me. Let\'s see if you can find something special—Up Dharma Down\'s last album, UDD. People say it\'s their most mature work, stripped down but honest. Synths, groove, heartache, all in one.',
-      'speaker': 'Tito Ramon (smirking)',
-    },
-    {
-      'type': 'dialogue',
-      'text':
-          'Check under \'U\'. The name\'s shorter now, just three letters. That\'s how you\'ll spot it.',
-      'speaker': 'Tito Ramon (pointing toward the shelves)',
-    },
-    {
-      'type': 'narration',
-      'text':
-          '[Gameplay Instructions]\n\n• Move around with the controls to navigate the shelves.\n• Interact with records to inspect them.\n• Locate UDD and bring it back to Tito Ramon.',
+          '[Gameplay Prompt]\n\n• Navigate to the Hip-Hop section.\n• Look for a vibrant, graffiti-like cover featuring a man in shades.\n• This is the first album that brought Pinoy rap to the mainstream.',
       'speaker': null,
     },
   ];
@@ -83,14 +59,18 @@ class _ShopScreenState extends State<ShopScreen> {
   final List<Map<String, dynamic>> _postFindDialogues = [
     {
       'type': 'dialogue',
-      'text':
-          'Good work finding that. Now, let\'s handle the transaction properly. Open the cart, write down the details—album, artist—and make sure everything\'s logged neat and proper. Every copy has a story tied to it.',
-      'speaker': 'Tito Ramon',
+      'text': 'There it is. The first king of Pinoy rap. Still untouchable.',
+      'speaker': 'MC Luwalhati (snapping his fingers)',
+    },
+    {
+      'type': 'dialogue',
+      'text': 'Legends don\'t fade, they echo.',
+      'speaker': 'Tito Ramon (grinning)',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart (top right corner).\n• Fill in the details of the transaction (UDD – Up Dharma Down).\n• Hand over the "change" to Tito Ramon.',
+          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -99,14 +79,20 @@ class _ShopScreenState extends State<ShopScreen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nTito Ramon takes the record from your hands, smiling faintly as he runs his fingers over the sleeve.',
+          '[Narration]\n\nMC Luwalhati nods, tapping the vinyl like a drumbeat as he heads toward the door.',
       'speaker': null,
     },
     {
       'type': 'dialogue',
       'text':
-          'Not bad for your first dig. Remember, every album you pull from these shelves isn\'t just music—it\'s a piece of someone\'s life. Treat it that way.',
-      'speaker': 'Tito Ramon (patting your shoulder)',
+          'Salamat, pare. This one\'s gonna get the kids hyped again. Keep the legacy alive.',
+      'speaker': 'MC Luwalhati',
+    },
+    {
+      'type': 'dialogue',
+      'text':
+          'That\'s what we do here. Every beat, every rhyme—they all matter.',
+      'speaker': 'Tito Ramon',
     },
   ];
 
@@ -127,7 +113,8 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   List<Map<String, dynamic>> _getCurrentDialogues() {
-    if (!_albumFound) return _dialogues;
+    if (_selectedOption == null) return _dialogues;
+    if (!_albumFound) return _postChoiceDialogues;
     if (!_transactionComplete) return _postFindDialogues;
     return _finalDialogues;
   }
@@ -143,13 +130,26 @@ class _ShopScreenState extends State<ShopScreen> {
       _updateShowContinue();
     } else {
       // End of current dialogue set
-      if (!_albumFound) {
+      if (_selectedOption == null) {
+        // Show dialogue options
+        setState(() {
+          _showContinue = false;
+        });
+      } else if (!_albumFound) {
         _startGameplay();
       } else if (_transactionComplete) {
         _exitCustomer();
       }
-      // If album found but transaction not complete, wait for cart interaction
     }
+  }
+
+  void _selectOption(String option) {
+    setState(() {
+      _selectedOption = option;
+      _dialogueIndex = 0;
+      _showContinue = false;
+    });
+    _updateShowContinue();
   }
 
   void _startGameplay() async {
@@ -157,24 +157,25 @@ class _ShopScreenState extends State<ShopScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ShelvesScreen(
-          targetAlbumTitle: 'UDD',
-          targetAlbumArtist: 'Up Dharma Down',
+          targetAlbumTitle: 'Yo!',
+          targetAlbumArtist: 'Francis M',
           successNarration:
-              'You scan the rows of vinyl until your hand lands on a sleek black-and-white cover with UDD embossed across it. Carefully, you lift it out and walk it over.',
+              'You flip through hip-hop sleeves until a vibrant, graffiti-like cover emerges—a man in shades, looking unshakable.',
           successDialogue:
-              '"There you go. Eyes sharp, hands steady. This one marks the band\'s evolution—less spectacle, more intimacy. Fans call it the sound of moving on."',
-          successSpeaker: 'Tito Ramon (nodding approvingly)',
-          wrongAlbumHint: 'Remember, check under "U"!',
+              '"There it is. The first king of Pinoy rap. Still untouchable."',
+          successSpeaker: 'MC Luwalhati (snapping his fingers)',
+          wrongAlbumHint:
+              'Look for a vibrant, graffiti-like cover with a man in shades. The first Pinoy rap album!',
         ),
       ),
     );
 
     if (result == true && mounted) {
-      // Add UDD album to cart when found
+      // Add Francis M album to cart when found
       GameState.addToCart({
-        'album': 'UDD',
-        'artist': 'Up Dharma Down',
-        'imagePath': 'assets/albums/udd_album.png',
+        'album': 'Yo!',
+        'artist': 'Francis Magalona',
+        'imagePath': 'assets/albums/francis_m_yo.png',
       });
 
       setState(() {
@@ -202,18 +203,23 @@ class _ShopScreenState extends State<ShopScreen> {
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
-        // Tutorial complete - navigate to Encounter 1
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => Encounter1Screen()),
-        );
+        Navigator.of(context).pop();
       }
     });
+  }
+
+  bool _isCustomerSpeaking() {
+    final currentDialogues = _getCurrentDialogues();
+    if (_dialogueIndex >= currentDialogues.length) return false;
+    final speaker = currentDialogues[_dialogueIndex]['speaker'];
+    return speaker != null && speaker.contains('MC Luwalhati');
   }
 
   bool _isTitoSpeaking() {
     final currentDialogues = _getCurrentDialogues();
     if (_dialogueIndex >= currentDialogues.length) return false;
-    return currentDialogues[_dialogueIndex]['type'] == 'dialogue';
+    final speaker = currentDialogues[_dialogueIndex]['speaker'];
+    return speaker != null && speaker.contains('Tito Ramon');
   }
 
   @override
@@ -227,9 +233,13 @@ class _ShopScreenState extends State<ShopScreen> {
         ? currentDialogues[_dialogueIndex]
         : null;
 
+    final showOptions = _selectedOption == null &&
+        _dialogueIndex >= _dialogues.length - 1 &&
+        _showContinue;
+
     return Scaffold(
       body: GestureDetector(
-        onTap: _nextDialogue,
+        onTap: showOptions ? null : _nextDialogue,
         child: Stack(
           children: [
             // Background
@@ -243,22 +253,42 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
 
-            // Customer character
+            // MC Luwalhati character
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              left: _customerExiting ? -w * 0.6 : w * 0.20,
-              right: _customerExiting ? w * 1.2 : w * 0.20,
+              left: _customerExiting ? -w * 0.6 : w * 0.10,
+              right: _customerExiting ? w * 1.2 : w * 0.30,
               top: h * 0.05,
               bottom: h * 0.28,
               child: Image.asset(
-                _isTitoSpeaking()
-                    ? 'assets/characters/tito_ramon_speaking.png'
-                    : 'assets/characters/tito_ramon.png',
+                _isCustomerSpeaking()
+                    ? 'assets/characters/mc_luwalhati_speaking.png'
+                    : 'assets/characters/mc_luwalhati.png',
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(color: Colors.transparent);
                 },
+              ),
+            ),
+
+            // Tito Ramon (behind counter)
+            Positioned(
+              right: w * 0.05,
+              top: h * 0.15,
+              width: w * 0.25,
+              height: h * 0.40,
+              child: Opacity(
+                opacity: 0.7,
+                child: Image.asset(
+                  _isTitoSpeaking()
+                      ? 'assets/characters/tito_ramon_speaking.png'
+                      : 'assets/characters/tito_ramon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: Colors.transparent);
+                  },
+                ),
               ),
             ),
 
@@ -285,7 +315,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 width: w * 0.25,
                 height: w * 0.25,
                 child: Image.asset(
-                  'assets/albums/udd_album.png',
+                  'assets/albums/francis_m_yo.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -332,97 +362,15 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
 
-            // Dialogue Box
-            if (!_customerExiting && currentDialogue != null)
+            // Dialogue Box or Options
+            if (!_customerExiting && (currentDialogue != null || showOptions))
               Positioned(
                 left: w * 0.04,
                 right: w * 0.04,
                 bottom: h * 0.01,
-                child: Container(
-                  constraints: BoxConstraints(maxHeight: h * 0.25),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: w * 0.035,
-                    vertical: h * 0.015,
-                  ),
-                  decoration: BoxDecoration(
-                    color: currentDialogue['type'] == 'narration'
-                        ? Colors.black.withOpacity(0.75)
-                        : Colors.white.withOpacity(0.85),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: currentDialogue['type'] == 'narration'
-                          ? Colors.white70
-                          : Colors.black87,
-                      width: 2.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: currentDialogue['type'] == 'narration'
-                        ? CrossAxisAlignment.center
-                        : CrossAxisAlignment.start,
-                    children: [
-                      if (currentDialogue['speaker'] != null)
-                        Text(
-                          currentDialogue['speaker'],
-                          style: TextStyle(
-                            fontSize: w * 0.017,
-                            fontWeight: FontWeight.bold,
-                            color: currentDialogue['type'] == 'narration'
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      if (currentDialogue['speaker'] != null)
-                        SizedBox(height: h * 0.006),
-                      Flexible(
-                        child: SingleChildScrollView(
-                          child: Text(
-                            currentDialogue['text'] ?? '',
-                            style: TextStyle(
-                              fontSize: w * 0.014,
-                              height: 1.35,
-                              color: currentDialogue['type'] == 'narration'
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontStyle: currentDialogue['type'] == 'narration'
-                                  ? FontStyle.italic
-                                  : FontStyle.normal,
-                            ),
-                            textAlign: currentDialogue['type'] == 'narration'
-                                ? TextAlign.center
-                                : TextAlign.left,
-                          ),
-                        ),
-                      ),
-                      if (_showContinue) ...[
-                        SizedBox(height: h * 0.006),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            '▼ Tap to continue',
-                            style: TextStyle(
-                              fontSize: w * 0.011,
-                              color: currentDialogue['type'] == 'narration'
-                                  ? Colors.white70
-                                  : Colors.black54,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                child: showOptions
+                    ? _buildDialogueOptions(w, h)
+                    : _buildDialogueBox(currentDialogue!, w, h),
               ),
 
             // Top left: Back arrow and Phone icon
@@ -621,6 +569,168 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
+    return Container(
+      constraints: BoxConstraints(maxHeight: h * 0.25),
+      padding: EdgeInsets.symmetric(
+        horizontal: w * 0.035,
+        vertical: h * 0.015,
+      ),
+      decoration: BoxDecoration(
+        color: dialogue['type'] == 'narration'
+            ? Colors.black.withOpacity(0.75)
+            : Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color:
+              dialogue['type'] == 'narration' ? Colors.white70 : Colors.black87,
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: dialogue['type'] == 'narration'
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
+        children: [
+          if (dialogue['speaker'] != null)
+            Text(
+              dialogue['speaker'],
+              style: TextStyle(
+                fontSize: w * 0.017,
+                fontWeight: FontWeight.bold,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Text(
+                dialogue['text'] ?? '',
+                style: TextStyle(
+                  fontSize: w * 0.014,
+                  height: 1.35,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white
+                      : Colors.black,
+                  fontStyle: dialogue['type'] == 'narration'
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                ),
+                textAlign: dialogue['type'] == 'narration'
+                    ? TextAlign.center
+                    : TextAlign.left,
+              ),
+            ),
+          ),
+          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
+            SizedBox(height: h * 0.006),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '▼ Tap to continue',
+                style: TextStyle(
+                  fontSize: w * 0.011,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white70
+                      : Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDialogueOptions(double w, double h) {
+    final options = [
+      {'text': 'Sounds like the roots of it all.', 'value': 'A'},
+      {'text': 'I\'ll dig it up for you.', 'value': 'B'},
+      {'text': 'The beat never dies.', 'value': 'C'},
+    ];
+
+    return Container(
+      constraints: BoxConstraints(maxHeight: h * 0.30),
+      padding: EdgeInsets.symmetric(
+        horizontal: w * 0.035,
+        vertical: h * 0.015,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.90),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.black87,
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Choose your response:',
+            style: TextStyle(
+              fontSize: w * 0.016,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: h * 0.01),
+          ...options.map((option) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: h * 0.008),
+              child: InkWell(
+                onTap: () => _selectOption(option['value']!),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: w * 0.02,
+                    vertical: h * 0.01,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.grey[400]!,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    '${option['value']}: ${option['text']}',
+                    style: TextStyle(
+                      fontSize: w * 0.014,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }

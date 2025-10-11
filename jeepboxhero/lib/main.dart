@@ -1,8 +1,20 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'screens/shop_screen.dart'; // Import shop screen
+import 'managers/audio_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize audio manager early (non-blocking). If audio setup fails
+  // on the current environment, we catch the error to avoid crashing the app.
+  try {
+    await AudioManager().initialize();
+  } catch (e) {
+    // ignore: avoid_print
+    print('AudioManager initialize failed: $e');
+  }
+
   runApp(const JeepBoxApp());
 }
 
@@ -76,6 +88,12 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           _narrationComplete = false;
         });
         _typeWriter();
+        // start BGM softly when narration begins
+        try {
+          AudioManager().playBgm('bgm_shop_ambient.mp3', volume: 0.25);
+        } catch (e) {
+          // ignore errors during startup
+        }
       }
     });
   }

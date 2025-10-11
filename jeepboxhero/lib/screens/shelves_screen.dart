@@ -2,7 +2,22 @@
 import 'package:flutter/material.dart';
 
 class ShelvesScreen extends StatefulWidget {
-  const ShelvesScreen({super.key});
+  final String targetAlbumTitle;
+  final String targetAlbumArtist;
+  final String successNarration;
+  final String successDialogue;
+  final String successSpeaker;
+  final String wrongAlbumHint;
+
+  const ShelvesScreen({
+    super.key,
+    required this.targetAlbumTitle,
+    required this.targetAlbumArtist,
+    this.successNarration = '',
+    this.successDialogue = '',
+    this.successSpeaker = 'Tito Ramon',
+    this.wrongAlbumHint = '',
+  });
 
   @override
   State<ShelvesScreen> createState() => _ShelvesScreenState();
@@ -30,7 +45,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'title': 'Yo!',
           'artist': 'Francis M.',
           'year': '2012',
-          'cover': 'albums/francism_yo.png',
+          'cover': 'albums/francis_m_yo.png',
           'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
@@ -119,7 +134,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'artist': 'Up Dharma Down',
           'year': '2019',
           'cover': 'albums/udd_album.png',
-          'isTarget': true,
           'position': {'left': 0.56, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
       ],
@@ -144,9 +158,17 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     }
   }
 
+  bool _isTargetAlbum(Map<String, dynamic> album) {
+    return album['title'].toLowerCase() ==
+            widget.targetAlbumTitle.toLowerCase() &&
+        album['artist']
+            .toLowerCase()
+            .contains(widget.targetAlbumArtist.toLowerCase());
+  }
+
   void _onAlbumTap(Map<String, dynamic> album, int index) {
     debugPrint(
-        'Album tapped: ${album['title']}, isTarget: ${album['isTarget']}');
+        'Album tapped: ${album['title']}, isTarget: ${_isTargetAlbum(album)}');
 
     setState(() {
       _highlightedAlbumIndex = index;
@@ -155,7 +177,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     // Brief highlight before showing dialog
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
-        if (album['isTarget'] == true) {
+        if (_isTargetAlbum(album)) {
           debugPrint('Showing SUCCESS dialog');
           _showSuccessDialog(album);
         } else {
@@ -185,33 +207,37 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '[Narration]',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  fontSize: 14,
+              if (widget.successNarration.isNotEmpty) ...[
+                const Text(
+                  '[Narration]',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 14,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'You scan the rows of vinyl until your hand lands on a sleek black-and-white cover with UDD embossed across it. Carefully, you lift it out and walk it over.',
-                style: TextStyle(fontSize: 15, height: 1.4),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Tito Ramon (nodding approvingly):',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                const SizedBox(height: 8),
+                Text(
+                  widget.successNarration,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '"There you go. Eyes sharp, hands steady. This one marks the band\'s evolution—less spectacle, more intimacy. Fans call it the sound of moving on."',
-                style: TextStyle(
-                    fontSize: 15, height: 1.4, fontStyle: FontStyle.italic),
-              ),
+                const SizedBox(height: 16),
+              ],
+              if (widget.successDialogue.isNotEmpty) ...[
+                Text(
+                  '${widget.successSpeaker}:',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.successDialogue,
+                  style: const TextStyle(
+                      fontSize: 15, height: 1.4, fontStyle: FontStyle.italic),
+                ),
+              ],
             ],
           ),
         ),
@@ -227,9 +253,9 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: const Text(
-              'Bring it to Tito Ramon →',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            child: Text(
+              'Bring it to ${widget.successSpeaker} →',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -238,6 +264,10 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
   }
 
   void _showWrongAlbumDialog(Map<String, dynamic> album) {
+    final hint = widget.wrongAlbumHint.isNotEmpty
+        ? widget.wrongAlbumHint
+        : 'But you\'re looking for ${widget.targetAlbumTitle} by ${widget.targetAlbumArtist}.';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -260,10 +290,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'But you\'re looking for UDD by Up Dharma Down. '
-              'Remember, check under "U"!',
-            ),
+            Text(hint),
           ],
         ),
         actions: [

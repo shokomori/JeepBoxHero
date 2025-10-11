@@ -135,13 +135,15 @@ class VinylRecord extends PositionComponent with TapCallbacks {
     onTap?.call();
   }
 
-  @override
-  void onHoverEnter() {
+  // Hover handlers: keep simple and accept an optional event parameter so this
+  // file compiles regardless of the Flame version's exact hover callback
+  // signature. If you upgrade Flame and want hover visuals, replace these
+  // with the exact signatures and add `with HoverCallbacks` to the class.
+  void onHoverEnter([dynamic _event]) {
     isHovered = true;
   }
 
-  @override
-  void onHoverExit() {
+  void onHoverExit([dynamic _event]) {
     isHovered = false;
   }
 
