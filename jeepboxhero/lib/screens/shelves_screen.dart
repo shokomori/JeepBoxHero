@@ -28,7 +28,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
   final int _totalShelves = 4;
   int? _highlightedAlbumIndex;
 
-  // Shelf backgrounds and clickable album positions
+  // Shelf backgrounds and album data
   final List<Map<String, dynamic>> _shelvesData = [
     {
       'label': 'First Shelf',
@@ -39,21 +39,18 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'artist': 'Kitchie Nadal',
           'year': '2004',
           'cover': 'albums/kitchie_nadal.png',
-          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'Yo!',
           'artist': 'Francis M.',
           'year': '2012',
           'cover': 'albums/francis_m_yo.png',
-          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'Malaya',
           'artist': 'Moira Dela Torre',
           'year': '2018',
           'cover': 'albums/moira_malaya.png',
-          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
       ],
     },
@@ -66,14 +63,12 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'artist': 'Lea Salonga',
           'year': '1993',
           'cover': 'albums/lea_salonga.png',
-          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'Mga Kwento ng Makata',
           'artist': 'Gloc-9',
           'year': '2012',
           'cover': 'albums/gloc9_kwento.png',
-          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
       ],
     },
@@ -86,21 +81,18 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'artist': 'Sexbomb Girls',
           'year': '2002',
           'cover': 'albums/sexbomb_unang.png',
-          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'Your Universe',
           'artist': 'Rico Blanco',
           'year': '2008',
           'cover': 'albums/rico_your_universe.png',
-          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'R2K',
           'artist': 'Regine Velasquez',
           'year': '1999',
           'cover': 'albums/regine_r2k.png',
-          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
       ],
     },
@@ -113,28 +105,24 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'artist': 'IV of Spades',
           'year': '2018',
           'cover': 'albums/ivspades_clap.png',
-          'position': {'left': 0.05, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
           'title': 'Talaarawan',
           'artist': 'BINI',
           'year': '2024',
           'cover': 'albums/bini_talaarawan.png',
-          'position': {'left': 0.22, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
         {
-          'title': 'Silakbo',
-          'artist': 'Cup of Joe',
+          'title': 'Cutterpillow',
+          'artist': 'Eraserheads',
           'year': '2025',
-          'cover': 'albums/cupjoe_silakbo.png',
-          'position': {'left': 0.39, 'top': 0.35, 'width': 0.15, 'height': 0.25}
+          'cover': 'albums/eraserheads_cutterpillow.png',
         },
         {
           'title': 'UDD',
           'artist': 'Up Dharma Down',
           'year': '2019',
           'cover': 'albums/udd_album.png',
-          'position': {'left': 0.56, 'top': 0.35, 'width': 0.15, 'height': 0.25}
         },
       ],
     },
@@ -159,11 +147,27 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
   }
 
   bool _isTargetAlbum(Map<String, dynamic> album) {
-    return album['title'].toLowerCase() ==
-            widget.targetAlbumTitle.toLowerCase() &&
-        album['artist']
-            .toLowerCase()
-            .contains(widget.targetAlbumArtist.toLowerCase());
+    String normalize(String s) {
+      return s
+          .toString()
+          .toLowerCase()
+          .trim()
+          // remove punctuation and extra whitespace
+          .replaceAll(RegExp(r"[^a-z0-9\s]"), '')
+          .replaceAll(RegExp(r"\s+"), ' ');
+    }
+
+    final albumTitle = normalize(album['title'] ?? '');
+    final targetTitle = normalize(widget.targetAlbumTitle);
+    final albumArtist = normalize(album['artist'] ?? '');
+    final targetArtist = normalize(widget.targetAlbumArtist);
+
+    // Debugging output to help trace matching issues
+    debugPrint('Matching album: "$albumTitle" vs targetTitle: "$targetTitle"');
+    debugPrint(
+        'Matching artist: "$albumArtist" vs targetArtist: "$targetArtist"');
+
+    return albumTitle == targetTitle && albumArtist.contains(targetArtist);
   }
 
   void _onAlbumTap(Map<String, dynamic> album, int index) {
@@ -308,61 +312,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     );
   }
 
-  Widget _buildClickableAlbum(
-      Map<String, dynamic> album, Size screenSize, int index) {
-    final position = album['position'];
-    final isHighlighted = _highlightedAlbumIndex == index;
-
-    return Positioned(
-      left: screenSize.width * position['left'],
-      top: screenSize.height * position['top'],
-      width: screenSize.width * position['width'],
-      height: screenSize.height * position['height'],
-      child: GestureDetector(
-        onTap: () => _onAlbumTap(album, index),
-        child: Container(
-          decoration: BoxDecoration(
-            border: isHighlighted
-                ? Border.all(color: Colors.amber, width: 4)
-                : null,
-            boxShadow: isHighlighted
-                ? [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.6),
-                      blurRadius: 15,
-                      spreadRadius: 3,
-                    )
-                  ]
-                : null,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIcon(String assetPath, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Image.asset(
-        assetPath,
-        width: 60,
-        height: 60,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.amber,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(Icons.image_not_supported, color: Colors.white),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildBottomAlbumPreview(
       Map<String, dynamic> album, Size size, int index) {
     final isHighlighted = _highlightedAlbumIndex == index;
@@ -471,45 +420,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
                   ),
                 );
               },
-            ),
-          ),
-
-          // Clickable album hotspots
-          ...List.generate(
-            currentShelf['albums'].length,
-            (index) => _buildClickableAlbum(
-              currentShelf['albums'][index],
-              size,
-              index,
-            ),
-          ),
-
-          // Top left icons
-          Positioned(
-            left: 16,
-            top: 16,
-            child: Row(
-              children: [
-                _buildIcon('assets/ui/settings_icon.png',
-                    () => debugPrint('Settings')),
-                const SizedBox(width: 12),
-                _buildIcon(
-                    'assets/ui/tablet_icon.png', () => debugPrint('Tablet')),
-              ],
-            ),
-          ),
-
-          // Top right icons
-          Positioned(
-            right: 16,
-            top: 16,
-            child: Row(
-              children: [
-                _buildIcon('assets/ui/cart_icon.png', () => debugPrint('Cart')),
-                const SizedBox(width: 12),
-                _buildIcon(
-                    'assets/ui/records_icon.png', () => debugPrint('Records')),
-              ],
             ),
           ),
 

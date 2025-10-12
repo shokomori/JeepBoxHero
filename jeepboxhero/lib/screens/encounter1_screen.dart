@@ -1,9 +1,11 @@
 // lib/screens/encounter1_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
+import 'package:jeepboxhero/screens/encounter2_screen.dart';
 
 class Encounter1Screen extends StatefulWidget {
   const Encounter1Screen({super.key});
@@ -100,6 +102,10 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
   void initState() {
     super.initState();
     _updateShowContinue();
+    // Play customer bell when encounter begins
+    try {
+      AudioManager().playSfx('sfx_bell_customer.mp3');
+    } catch (_) {}
   }
 
   void _updateShowContinue() {
@@ -156,7 +162,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShelvesScreen(
+        builder: (context) => const ShelvesScreen(
           targetAlbumTitle: 'Yo!',
           targetAlbumArtist: 'Francis M',
           successNarration:
@@ -203,7 +209,23 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
-        Navigator.of(context).pop();
+        // Replace this encounter with Encounter2Screen using a fade+slide transition
+        Navigator.of(context).pushReplacement(PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const Encounter2Screen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final fade =
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+            final offset =
+                Tween<Offset>(begin: const Offset(0.0, 0.05), end: Offset.zero)
+                    .animate(animation);
+            return FadeTransition(
+              opacity: fade,
+              child: SlideTransition(position: offset, child: child),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 600),
+        ));
       }
     });
   }
@@ -618,7 +640,9 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               overflow: TextOverflow.ellipsis,
             ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
-          Flexible(
+          // constrain and make dialogue text scrollable so the Column won't overflow
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: h * 0.16),
             child: SingleChildScrollView(
               child: Text(
                 dialogue['text'] ?? '',
@@ -667,10 +691,10 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     ];
 
     return Container(
-      constraints: BoxConstraints(maxHeight: h * 0.30),
+      constraints: BoxConstraints(maxHeight: h * 0.40),
       padding: EdgeInsets.symmetric(
         horizontal: w * 0.035,
-        vertical: h * 0.015,
+        vertical: h * 0.010,
       ),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.90),
@@ -694,42 +718,50 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
           Text(
             'Choose your response:',
             style: TextStyle(
-              fontSize: w * 0.016,
+              fontSize: w * 0.015,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: h * 0.01),
-          ...options.map((option) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: h * 0.008),
-              child: InkWell(
-                onTap: () => _selectOption(option['value']!),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: w * 0.02,
-                    vertical: h * 0.01,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.grey[400]!,
-                      width: 1.5,
+          SizedBox(height: h * 0.008),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: h * 0.28),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: options.map((option) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: h * 0.006),
+                    child: InkWell(
+                      onTap: () => _selectOption(option['value']!),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: w * 0.02,
+                          vertical: h * 0.008,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.grey[400]!,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Text(
+                          '${option['value']}: ${option['text']}',
+                          style: TextStyle(
+                            fontSize: w * 0.013,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    '${option['value']}: ${option['text']}',
-                    style: TextStyle(
-                      fontSize: w * 0.014,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
+                  );
+                }).toList(),
               ),
-            );
-          }).toList(),
+            ),
+          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 // lib/main.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'screens/shop_screen.dart'; // Import shop screen
 import 'managers/audio_manager.dart';
@@ -15,6 +16,12 @@ void main() async {
     print('AudioManager initialize failed: $e');
   }
 
+  // Debug: print startup info so we can verify which home widget is used at runtime.
+  if (kDebugMode) {
+    // ignore: avoid_print
+    print('main.dart: about to run JeepBoxApp');
+  }
+
   runApp(const JeepBoxApp());
 }
 
@@ -23,6 +30,10 @@ class JeepBoxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      // ignore: avoid_print
+      print('JeepBoxApp.build: MaterialApp.home = MainMenuScreen');
+    }
     return MaterialApp(
       title: 'Jeep Box Hero',
       theme: ThemeData(
@@ -88,12 +99,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
           _narrationComplete = false;
         });
         _typeWriter();
-        // start BGM softly when narration begins
-        try {
-          AudioManager().playBgm('bgm_shop_ambient.mp3', volume: 0.25);
-        } catch (e) {
-          // ignore errors during startup
-        }
       }
     });
   }
@@ -109,6 +114,10 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     if (_logoTapped) return;
     setState(() => _logoTapped = true);
     _slideController.forward();
+    // Start menu BGM on user gesture to satisfy browser autoplay policies
+    try {
+      AudioManager().playBgm('menu_music.mp3', volume: 0.25);
+    } catch (_) {}
   }
 
   void _startNarration() {
@@ -154,7 +163,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     });
   }
 
-  void _onNarrationTap() {
+  Future<void> _onNarrationTap() async {
     if (!_narrationComplete) {
       setState(() {
         _visibleText = _fullText;
@@ -162,6 +171,11 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       });
       return;
     }
+
+    // Stop menu BGM then navigate to ShopScreen
+    try {
+      await AudioManager().stopBgm();
+    } catch (_) {}
 
     // Navigate to ShopScreen instead of GameScreen
     Navigator.of(context).pushReplacement(

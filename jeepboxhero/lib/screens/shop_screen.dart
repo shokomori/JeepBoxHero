@@ -4,6 +4,7 @@
 // lib/screens/shop_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
@@ -114,6 +115,11 @@ class _ShopScreenState extends State<ShopScreen> {
   void initState() {
     super.initState();
     _updateShowContinue();
+    // Start persistent shop ambient music (looping)
+    try {
+      AudioManager()
+          .playAmbient('bgm_shop_ambient.mp3', volume: 0.25, loop: true);
+    } catch (_) {}
   }
 
   void _updateShowContinue() {
