@@ -1,6 +1,7 @@
 // lib/screens/records_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import '../managers/audio_manager.dart';
 
 class RecordsScreen extends StatelessWidget {
   const RecordsScreen({super.key});
@@ -173,7 +174,8 @@ class RecordsScreen extends StatelessWidget {
                       : Padding(
                           padding: EdgeInsets.symmetric(horizontal: w * 0.04),
                           child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
+                            // Allow scrolling so users can access all collected records
+                            physics: const AlwaysScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4,
@@ -181,7 +183,7 @@ class RecordsScreen extends StatelessWidget {
                               crossAxisSpacing: w * 0.025,
                               mainAxisSpacing: h * 0.02,
                             ),
-                            itemCount: records.length > 8 ? 8 : records.length,
+                            itemCount: records.length,
                             itemBuilder: (context, index) {
                               final record = records[index];
                               return _RecordCard(
@@ -426,37 +428,101 @@ class AlbumDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(width: w * 0.02),
+                  const SizedBox(width: 24),
 
-                  // Center: Enlarged vinyl with album cover
+                  // Center: Enlarged vinyl with album cover (with play button underneath)
                   Flexible(
                     flex: 44,
-                    child: Container(
-                      constraints: BoxConstraints(maxHeight: h * 0.7),
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/albums/${baseName}_vinyl.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 250,
-                            height: 250,
-                            decoration: const BoxDecoration(
-                              color: Colors.black,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.album,
-                              size: 120,
-                              color: Colors.white54,
-                            ),
-                          );
-                        },
-                      ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(maxHeight: h * 0.7),
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/albums/${baseName}_vinyl.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 250,
+                                height: 250,
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.album,
+                                  size: 120,
+                                  color: Colors.white54,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        SizedBox(height: h * 0.02),
+
+                        // Centered play card below the vinyl
+                        Container(
+                          width: w * 0.32,
+                          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 12, offset: const Offset(0, 6))],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(record['album'] ?? '', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: w * 0.016)),
+                                    SizedBox(height: h * 0.006),
+                                    Text(record['artist'] ?? '', textAlign: TextAlign.center, style: TextStyle(fontSize: w * 0.012, color: Colors.brown.withOpacity(0.7))),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  final audioPath = record['audioPath'] ?? 'audio/${baseName.replaceAll('_info', '')}.mp3';
+                                  try {
+                                    await AudioManager().stopBgm();
+                                  } catch (_) {}
+                                  try {
+                                    await AudioManager().playBgm(audioPath, volume: 0.2, loop: true);
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Playing ${record['album']}')));
+                                  } catch (e) {
+                                    try {
+                                      await AudioManager().playSfx('sfx_page_turn.mp3');
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Preview unavailable — played a sample instead.')));
+                                    } catch (_) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to play audio.')));
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  backgroundColor: const Color(0xFF6C63FF),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.play_arrow, color: Colors.white),
+                                    const SizedBox(width: 6),
+                                    Text('Play', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-
-                  SizedBox(width: w * 0.02),
 
                   // Right side: Tracklist card
                   Flexible(

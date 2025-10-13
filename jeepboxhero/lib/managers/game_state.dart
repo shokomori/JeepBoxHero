@@ -17,8 +17,37 @@ class GameState {
         r['album'] == record['album'] && r['artist'] == record['artist']);
 
     if (!exists) {
-      _records.add(record);
+      // Ensure we store an audioPath for the record if available or can be inferred
+      final Map<String, dynamic> toStore = Map<String, dynamic>.from(record);
+      if (toStore['audioPath'] == null) {
+        final imagePath = toStore['imagePath'] ?? '';
+        final inferred = _inferAudioPathFromImage(imagePath) ?? _inferAudioPathFromNames(toStore['album'], toStore['artist']);
+        if (inferred != null) toStore['audioPath'] = inferred;
+      }
+
+      _records.add(toStore);
     }
+  }
+
+  // Try to infer an audio filename (assets/audio/bgm_<name>.mp3) from an image path
+  static String? _inferAudioPathFromImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) return null;
+    try {
+      final fileName = imagePath.split('/').last;
+      var base = fileName.replaceAll('.png', '').replaceAll('.jpg', '').replaceAll('.jpeg', '');
+      base = base.replaceAll(RegExp(r'_(info|vinyl|tracklist)\$'), '');
+      // Normalize spaces/uppercase to underscore-lowercase
+      base = base.replaceAll(' ', '_').toLowerCase();
+      return 'bgm_${base}.mp3';
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static String? _inferAudioPathFromNames(String? album, String? artist) {
+    if ((album == null || album.isEmpty) && (artist == null || artist.isEmpty)) return null;
+    final combined = '${album ?? ''}_${artist ?? ''}'.replaceAll(RegExp(r"[^a-zA-Z0-9_]"), '_').toLowerCase();
+    return 'bgm_${combined}.mp3';
   }
 
   static void removeRecord(int index) {
@@ -69,11 +98,14 @@ class GameState {
   // ✅ Complete transaction: move all cart items into records
   static void completeTransaction() {
     for (var item in _cartItems) {
-      addRecord({
+      final recordMap = {
         'album': item['album'],
         'artist': item['artist'],
         'imagePath': item['imagePath'] ?? 'assets/albums/default_album.png',
-      });
+      };
+      // if the cart item already included an audioPath, pass it along
+      if (item['audioPath'] != null) recordMap['audioPath'] = item['audioPath'];
+      addRecord(recordMap);
     }
     _cartItems.clear(); // Empty the cart after checkout
   }
