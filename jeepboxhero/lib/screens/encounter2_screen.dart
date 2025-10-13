@@ -1,3 +1,4 @@
+import '../components/ui/phone_save_load_popup.dart';
 // lib/screens/encounter2_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
@@ -8,13 +9,45 @@ import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter3_screen.dart';
 
 class Encounter2Screen extends StatefulWidget {
-  const Encounter2Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter2Screen({this.progress, super.key});
 
   @override
   State<Encounter2Screen> createState() => _Encounter2ScreenState();
 }
 
 class _Encounter2ScreenState extends State<Encounter2Screen> {
+  void _showSaveLoadPopup() {
+    showDialog(
+      context: context,
+      builder: (context) => PhoneSaveLoadPopup(
+        encounterId: 'encounter2',
+        progress: {
+          'dialogueIndex': _dialogueIndex,
+          'albumFound': _albumFound,
+          'transactionComplete': _transactionComplete,
+          'selectedOption': _selectedOption,
+          'recordCollection': GameState.records,
+        },
+        onLoad: (loadedState) {
+          if (loadedState != null) {
+            setState(() {
+              _dialogueIndex = loadedState['progress']['dialogueIndex'] ?? 0;
+              _albumFound = loadedState['progress']['albumFound'] ?? false;
+              _transactionComplete =
+                  loadedState['progress']['transactionComplete'] ?? false;
+              _selectedOption = loadedState['progress']['selectedOption'];
+              if (loadedState['progress']['recordCollection'] != null) {
+                GameState.records = List<Map<String, dynamic>>.from(
+                    loadedState['progress']['recordCollection']);
+              }
+            });
+          }
+        },
+      ),
+    );
+  }
+
   int _dialogueIndex = 0;
   bool _showContinue = false;
   bool _albumFound = false;
@@ -415,7 +448,9 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      // Wire back button to main menu
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
                     },
                     child: Image.asset(
                       'assets/ui/back_arrow.png',
@@ -436,7 +471,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => debugPrint('Phone tapped'),
+                    onTap: _showSaveLoadPopup,
                     child: Image.asset(
                       'assets/ui/tablet_icon.png',
                       width: w * 0.055,

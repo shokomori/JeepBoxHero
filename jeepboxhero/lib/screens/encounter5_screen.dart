@@ -7,9 +7,11 @@ import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 // Navigate to next encounter (Encounter 6)
 import 'package:jeepboxhero/screens/encounter6_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter5Screen extends StatefulWidget {
-  const Encounter5Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter5Screen({this.progress, super.key});
 
   @override
   State<Encounter5Screen> createState() => _Encounter5ScreenState();
@@ -275,6 +277,44 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
                 },
               ),
             ),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter5',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
 
             // Aling Fe character (left)
             AnimatedPositioned(
@@ -404,7 +444,8 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
                     },
                     child: Image.asset(
                       'assets/ui/back_arrow.png',
@@ -425,7 +466,43 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => debugPrint('Phone tapped'),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter5',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
                     child: Image.asset(
                       'assets/ui/tablet_icon.png',
                       width: w * 0.055,

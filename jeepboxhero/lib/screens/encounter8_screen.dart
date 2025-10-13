@@ -6,9 +6,11 @@ import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter9_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter8Screen extends StatefulWidget {
-  const Encounter8Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter8Screen({this.progress, super.key});
 
   @override
   State<Encounter8Screen> createState() => _Encounter8ScreenState();
@@ -223,13 +225,6 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
     return speaker != null && speaker.toString().contains('Mara');
   }
 
-  bool _isTitoSpeaking() {
-    final currentDialogues = _getCurrentDialogues();
-    if (_dialogueIndex >= currentDialogues.length) return false;
-    final speaker = currentDialogues[_dialogueIndex]['speaker'];
-    return speaker != null && speaker.toString().contains('Tito Ramon');
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -257,6 +252,44 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
                 return Container(color: Colors.grey[300]);
               }),
             ),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter8',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
@@ -265,91 +298,79 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
-                  _isCustomerSpeaking()
-                      ? 'assets/characters/mara_talking.png'
-                      : 'assets/characters/mara.png',
+                _isCustomerSpeaking()
+                    ? 'assets/characters/mara_talking.png'
+                    : 'assets/characters/mara.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(color: Colors.transparent);
+                },
+              ),
+            ),
+            // Table (restore missing table)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: -h * 0.05,
+              height: h * 0.38,
+              child: Image.asset(
+                'assets/ui/table.png',
+                fit: BoxFit.fill,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(color: Colors.brown[200]);
+                },
+              ),
+            ),
+            Positioned(
+              left: w * 0.03,
+              bottom: h * 0.05,
+              width: w * 0.38,
+              height: h * 0.46,
+              child: GestureDetector(
+                onTap: () => debugPrint('Folder tapped'),
+                child: Image.asset(
+                  'assets/ui/closed_folder.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
-                return Container(color: Colors.transparent);
-              }),
-            ),
-            Positioned(
-              right: w * 0.05,
-              top: h * 0.15,
-              width: w * 0.25,
-              height: h * 0.40,
-              child: Opacity(
-                  opacity: 0.7,
-                  child: Image.asset(
-                      _isTitoSpeaking()
-                          ? 'assets/characters/tito_ramon_speaking.png'
-                          : 'assets/characters/tito_ramon.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
                     return Container(color: Colors.transparent);
-                  })),
+                  },
+                ),
+              ),
             ),
             Positioned(
-                left: 0,
-                right: 0,
-                bottom: -h * 0.05,
-                height: h * 0.38,
-                child: Image.asset('assets/ui/table.png', fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) {
-                  return Container(color: Colors.brown[200]);
-                })),
-            if (_albumFound)
-              Positioned(
-                  left: w * 0.35,
-                  bottom: h * 0.12,
-                  width: w * 0.25,
-                  height: w * 0.25,
-                  child: Image.asset('assets/albums/moira_malaya.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                        color: Colors.grey[400],
-                        child:
-                            const Center(child: Icon(Icons.album, size: 64)));
-                  })),
-            Positioned(
-                left: w * 0.03,
-                bottom: h * 0.05,
-                width: w * 0.38,
-                height: h * 0.46,
-                child: GestureDetector(
-                    onTap: () => debugPrint('Folder tapped'),
-                    child: Image.asset('assets/ui/closed_folder.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                      return Container(color: Colors.transparent);
-                    }))),
-            Positioned(
-                right: -w * 0.15,
-                bottom: -h * 0.03,
-                width: w * 0.85,
-                height: h * 0.65,
-                child: GestureDetector(
-                    onTap: () => debugPrint('Cash box tapped'),
-                    child: Image.asset('assets/ui/cash_box.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                      return Container(color: Colors.transparent);
-                    }))),
+              right: -w * 0.15,
+              bottom: -h * 0.03,
+              width: w * 0.85,
+              height: h * 0.65,
+              child: GestureDetector(
+                onTap: () => debugPrint('Cash box tapped'),
+                child: Image.asset(
+                  'assets/ui/cash_box.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: Colors.transparent);
+                  },
+                ),
+              ),
+            ),
             if (!_customerExiting && (currentDialogue != null || showOptions))
               Positioned(
-                  left: w * 0.04,
-                  right: w * 0.04,
-                  bottom: h * 0.01,
-                  child: showOptions
-                      ? _buildDialogueOptions(w, h)
-                      : _buildDialogueBox(currentDialogue!, w, h)),
+                left: w * 0.04,
+                right: w * 0.04,
+                bottom: h * 0.01,
+                child: showOptions
+                    ? _buildDialogueOptions(w, h)
+                    : _buildDialogueBox(currentDialogue!, w, h),
+              ),
             Positioned(
                 left: 16,
                 top: 16,
                 child: Row(children: [
                   GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('/', (route) => false);
+                      },
                       child: Image.asset('assets/ui/back_arrow.png',
                           width: w * 0.055, height: w * 0.055,
                           errorBuilder: (context, error, stackTrace) {
@@ -363,18 +384,60 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
                       })),
                   const SizedBox(width: 12),
                   GestureDetector(
-                      onTap: () => debugPrint('Phone tapped'),
-                      child: Image.asset('assets/ui/tablet_icon.png',
-                          width: w * 0.055, height: w * 0.055,
-                          errorBuilder: (context, error, stackTrace) {
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter8',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/ui/tablet_icon.png',
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      errorBuilder: (context, error, stackTrace) {
                         return Container(
-                            width: w * 0.055,
-                            height: w * 0.055,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.phone, size: 30));
-                      }))
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.phone, size: 30),
+                        );
+                      },
+                    ),
+                  )
                 ])),
             Positioned(
                 right: 16,

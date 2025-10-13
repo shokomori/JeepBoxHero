@@ -6,9 +6,11 @@ import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter8_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter7Screen extends StatefulWidget {
-  const Encounter7Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter7Screen({this.progress, super.key});
 
   @override
   State<Encounter7Screen> createState() => _Encounter7ScreenState();
@@ -266,6 +268,44 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
                 },
               ),
             ),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter7',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
 
             // Didi Disco character (left)
             AnimatedPositioned(
@@ -393,7 +433,10 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
               top: 16,
               child: Row(children: [
                 GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
+                    },
                     child: Image.asset('assets/ui/back_arrow.png',
                         width: w * 0.055, height: w * 0.055,
                         errorBuilder: (context, error, stackTrace) {
@@ -407,18 +450,59 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
                     })),
                 const SizedBox(width: 12),
                 GestureDetector(
-                    onTap: () => debugPrint('Phone tapped'),
-                    child: Image.asset('assets/ui/tablet_icon.png',
-                        width: w * 0.055, height: w * 0.055,
-                        errorBuilder: (context, error, stackTrace) {
-                      return Container(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter7',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/ui/tablet_icon.png',
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
                           width: w * 0.055,
                           height: w * 0.055,
                           decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8)),
-                          child: const Icon(Icons.phone, size: 30));
-                    })),
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.phone, size: 30),
+                        );
+                      },
+                    )),
               ]),
             ),
 

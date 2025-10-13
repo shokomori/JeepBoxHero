@@ -6,9 +6,11 @@ import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/epilogue_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter10Screen extends StatefulWidget {
-  const Encounter10Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter10Screen({this.progress, super.key});
 
   @override
   State<Encounter10Screen> createState() => _Encounter10ScreenState();
@@ -253,6 +255,44 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
                     errorBuilder: (context, error, stackTrace) {
               return Container(color: Colors.grey[300]);
             })),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter10',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
@@ -345,7 +385,10 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
                 top: 16,
                 child: Row(children: [
                   GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('/', (route) => false);
+                      },
                       child: Image.asset('assets/ui/back_arrow.png',
                           width: w * 0.055, height: w * 0.055,
                           errorBuilder: (context, error, stackTrace) {
@@ -359,18 +402,60 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
                       })),
                   const SizedBox(width: 12),
                   GestureDetector(
-                      onTap: () => debugPrint('Phone tapped'),
-                      child: Image.asset('assets/ui/tablet_icon.png',
-                          width: w * 0.055, height: w * 0.055,
-                          errorBuilder: (context, error, stackTrace) {
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter10',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/ui/tablet_icon.png',
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      errorBuilder: (context, error, stackTrace) {
                         return Container(
-                            width: w * 0.055,
-                            height: w * 0.055,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.phone, size: 30));
-                      }))
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.phone, size: 30),
+                        );
+                      },
+                    ),
+                  )
                 ])),
             Positioned(
                 right: 16,

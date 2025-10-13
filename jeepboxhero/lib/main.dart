@@ -1,24 +1,43 @@
+import 'components/ui/phone_save_load_popup.dart';
+import 'screens/encounter2_screen.dart';
 // lib/main.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'screens/shop_screen.dart'; // Import shop screen
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'screens/shop_screen.dart';
 import 'managers/audio_manager.dart';
 
-void main() async {
+const supabaseUrl = 'https://aolfomgjqcqeaewwieup.supabase.co';
+const supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvbGZvbWdqcWNxZWFld3dpZXVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNTQ5NzcsImV4cCI6MjA3NTkzMDk3N30.LEkKM9HU_Ws7kPjcrMN-cgvll7AiNdu7vjj_PaZ-6-0';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize audio manager early (non-blocking). If audio setup fails
-  // on the current environment, we catch the error to avoid crashing the app.
+  // ✅ Initialize Supabase first (before anything else that depends on it)
+  try {
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseKey,
+      debug: true,
+    );
+
+    if (kDebugMode) {
+      print('✅ Supabase initialized successfully');
+    }
+  } catch (e) {
+    print('❌ Supabase initialization failed: $e');
+  }
+
+  // ✅ Initialize audio manager (non-blocking but inside try/catch)
   try {
     await AudioManager().initialize();
   } catch (e) {
-    // ignore: avoid_print
     print('AudioManager initialize failed: $e');
   }
 
-  // Debug: print startup info so we can verify which home widget is used at runtime.
+  // Debug: verify which home widget is used
   if (kDebugMode) {
-    // ignore: avoid_print
     print('main.dart: about to run JeepBoxApp');
   }
 
@@ -64,6 +83,10 @@ class _MainMenuScreenState extends State<MainMenuScreen>
   String _visibleText = "";
   int _charIndex = 0;
   bool _isTransitioning = false;
+  bool _showLoadDialog = false;
+  List<Map<String, dynamic>> _saveStates = [];
+  bool _loadingStates = false;
+  String? _loadError;
 
   late final AnimationController _slideController;
   late final Animation<double> _slideAnimation;
@@ -118,6 +141,60 @@ class _MainMenuScreenState extends State<MainMenuScreen>
     try {
       AudioManager().playBgm('menu_music.mp3', volume: 0.25);
     } catch (_) {}
+  }
+
+  void _onContinueTap() async {
+    showDialog(
+      context: context,
+      builder: (context) => PhoneSaveLoadPopup(
+        encounterId: 'main_menu',
+        progress: {},
+        onLoad: (loadedState) {
+          if (loadedState != null) {
+            // You can route to the correct encounter here
+            final encounter = loadedState['encounter'] ?? 'shop';
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) {
+                  // Route to the correct screen based on encounter
+                  // You can expand this logic for all encounters
+                  if (encounter == 'encounter2') {
+                    return const Encounter2Screen();
+                  }
+                  // Add more encounter screens as needed
+                  return ShopScreen();
+                },
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  void _onSelectSaveState(Map<String, dynamic> state) async {
+    // TODO: Restore game state from selected save state
+    // For now, just close dialog and go to ShopScreen
+    setState(() {
+      _showLoadDialog = false;
+    });
+    try {
+      await AudioManager().stopBgm();
+    } catch (_) {}
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => ShopScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
+  void _onCloseLoadDialog() {
+    setState(() {
+      _showLoadDialog = false;
+    });
   }
 
   void _startNarration() {
@@ -192,14 +269,12 @@ class _MainMenuScreenState extends State<MainMenuScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     final logoWidth = size.width * 0.45;
     final logoHeight = logoWidth * 0.75;
     final logoStartX = size.width / 2 - logoWidth / 2;
     final logoMidX = size.width * 0.68 - logoWidth / 2;
     final logoEndX = size.width;
     final logoY = size.height / 2 - logoHeight / 2;
-
     final buttonWidth = size.width * 0.5;
     final buttonHeight = size.height * 0.12;
     final buttonStartX = -buttonWidth;
@@ -262,7 +337,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
 
                       // Buttons
                       if (_logoTapped && !_showNarration)
-                        ...List.generate(3, (i) {
+                        ...List.generate(3, (index) {
                           final buttonFiles = [
                             'assets/ui/start.png',
                             'assets/ui/continue.png',
@@ -270,17 +345,17 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                           ];
                           return Positioned(
                             left: buttonX,
-                            top: buttonStartY + (i * buttonSpacing),
+                            top: buttonStartY + (index * buttonSpacing),
                             child: Opacity(
                               opacity: opacity,
                               child: GestureDetector(
                                 onTap: () {
-                                  if (i == 0) _startNarration();
-                                  if (i == 1) widget.onContinue?.call();
-                                  if (i == 2) widget.onQuit?.call();
+                                  if (index == 0) _startNarration();
+                                  if (index == 1) _onContinueTap();
+                                  if (index == 2) widget.onQuit?.call();
                                 },
                                 child: Image.asset(
-                                  buttonFiles[i],
+                                  buttonFiles[index],
                                   width: buttonWidth,
                                   height: buttonHeight,
                                   fit: BoxFit.contain,
@@ -289,6 +364,78 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                             ),
                           );
                         }),
+
+                      // Load State Dialog
+                      if (_showLoadDialog)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.7),
+                            child: Center(
+                              child: Container(
+                                width: size.width * 0.7,
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Load Save State',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: _onCloseLoadDialog,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    if (_loadingStates)
+                                      const CircularProgressIndicator(),
+                                    if (_loadError != null)
+                                      Text(_loadError!,
+                                          style: const TextStyle(
+                                              color: Colors.red)),
+                                    if (!_loadingStates &&
+                                        _saveStates.isEmpty &&
+                                        _loadError == null)
+                                      const Text('No save states found.'),
+                                    if (!_loadingStates &&
+                                        _saveStates.isNotEmpty)
+                                      SizedBox(
+                                        height: 220,
+                                        child: ListView.builder(
+                                          itemCount: _saveStates.length,
+                                          itemBuilder: (context, idx) {
+                                            final state = _saveStates[idx];
+                                            return Card(
+                                              child: ListTile(
+                                                title: Text(
+                                                    'Encounter: ${state['encounter'] ?? 'Unknown'}'),
+                                                subtitle: Text(
+                                                    'Saved: ${state['timestamp'] ?? ''}'),
+                                                onTap: () =>
+                                                    _onSelectSaveState(state),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
 
                       // Narration
                       if (_showNarration)

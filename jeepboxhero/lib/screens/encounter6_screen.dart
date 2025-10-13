@@ -7,9 +7,11 @@ import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 // Import next encounter screen
 import 'package:jeepboxhero/screens/encounter7_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter6Screen extends StatefulWidget {
-  const Encounter6Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter6Screen({this.progress, super.key});
 
   @override
   State<Encounter6Screen> createState() => _Encounter6ScreenState();
@@ -273,6 +275,44 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
                 },
               ),
             ),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter6',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
 
             // Shoko character (left)
             AnimatedPositioned(
@@ -402,7 +442,8 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
                     },
                     child: Image.asset(
                       'assets/ui/back_arrow.png',
@@ -423,7 +464,43 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => debugPrint('Phone tapped'),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter6',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
                     child: Image.asset(
                       'assets/ui/tablet_icon.png',
                       width: w * 0.055,

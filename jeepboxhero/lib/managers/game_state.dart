@@ -1,6 +1,13 @@
 // lib/managers/game_state.dart
 
 class GameState {
+  // Setter for restoring records from save
+  static set records(List recordsList) {
+    _records
+      ..clear()
+      ..addAll(List<Map<String, dynamic>>.from(recordsList));
+  }
+
   // Static lists to maintain state across screens
   static final List<Map<String, dynamic>> _records = [];
   static final List<Map<String, dynamic>> _cartItems = [];
@@ -21,7 +28,8 @@ class GameState {
       final Map<String, dynamic> toStore = Map<String, dynamic>.from(record);
       if (toStore['audioPath'] == null) {
         final imagePath = toStore['imagePath'] ?? '';
-        final inferred = _inferAudioPathFromImage(imagePath) ?? _inferAudioPathFromNames(toStore['album'], toStore['artist']);
+        final inferred = _inferAudioPathFromImage(imagePath) ??
+            _inferAudioPathFromNames(toStore['album'], toStore['artist']);
         if (inferred != null) toStore['audioPath'] = inferred;
       }
 
@@ -34,7 +42,10 @@ class GameState {
     if (imagePath == null || imagePath.isEmpty) return null;
     try {
       final fileName = imagePath.split('/').last;
-      var base = fileName.replaceAll('.png', '').replaceAll('.jpg', '').replaceAll('.jpeg', '');
+      var base = fileName
+          .replaceAll('.png', '')
+          .replaceAll('.jpg', '')
+          .replaceAll('.jpeg', '');
       base = base.replaceAll(RegExp(r'_(info|vinyl|tracklist)\$'), '');
       // Normalize spaces/uppercase to underscore-lowercase
       base = base.replaceAll(' ', '_').toLowerCase();
@@ -45,8 +56,11 @@ class GameState {
   }
 
   static String? _inferAudioPathFromNames(String? album, String? artist) {
-    if ((album == null || album.isEmpty) && (artist == null || artist.isEmpty)) return null;
-    final combined = '${album ?? ''}_${artist ?? ''}'.replaceAll(RegExp(r"[^a-zA-Z0-9_]"), '_').toLowerCase();
+    if ((album == null || album.isEmpty) && (artist == null || artist.isEmpty))
+      return null;
+    final combined = '${album ?? ''}_${artist ?? ''}'
+        .replaceAll(RegExp(r"[^a-zA-Z0-9_]"), '_')
+        .toLowerCase();
     return 'bgm_${combined}.mp3';
   }
 

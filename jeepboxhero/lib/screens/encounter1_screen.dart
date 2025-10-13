@@ -6,9 +6,11 @@ import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter2_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter1Screen extends StatefulWidget {
-  const Encounter1Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter1Screen({this.progress, super.key});
 
   @override
   State<Encounter1Screen> createState() => _Encounter1ScreenState();
@@ -21,6 +23,9 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
   bool _transactionComplete = false;
   bool _customerExiting = false;
   String? _selectedOption;
+
+  // Track record collections for this encounter
+  List<dynamic> _recordCollection = [];
 
   final List<Map<String, dynamic>> _dialogues = [
     {
@@ -101,6 +106,19 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
   @override
   void initState() {
     super.initState();
+    // Restore progress if loading from save
+    if (widget.progress != null) {
+      _dialogueIndex = widget.progress!['dialogueIndex'] ?? 0;
+      _albumFound = widget.progress!['albumFound'] ?? false;
+      _transactionComplete = widget.progress!['transactionComplete'] ?? false;
+      _selectedOption = widget.progress!['selectedOption'];
+      _recordCollection =
+          List<dynamic>.from(widget.progress!['recordCollection'] ?? []);
+      // Restore GameState.records if present
+      if (widget.progress!['records'] != null) {
+        GameState.records = List<dynamic>.from(widget.progress!['records']);
+      }
+    }
     _updateShowContinue();
     // Play customer bell when encounter begins
     try {
@@ -274,6 +292,44 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
                 },
               ),
             ),
+            // Phone icon overlay for save/load
+            Positioned(
+              right: 20,
+              top: 20,
+              child: IconButton(
+                icon: Icon(Icons.phone_android,
+                    size: 32, color: Colors.deepPurple),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => PhoneSaveLoadPopup(
+                      encounterId: 'encounter1',
+                      progress: {
+                        'dialogueIndex': _dialogueIndex,
+                        'albumFound': _albumFound,
+                        'transactionComplete': _transactionComplete,
+                        'selectedOption': _selectedOption,
+                      },
+                      onLoad: (state) {
+                        if (state != null) {
+                          setState(() {
+                            _dialogueIndex =
+                                state['progress']['dialogueIndex'] ?? 0;
+                            _albumFound =
+                                state['progress']['albumFound'] ?? false;
+                            _transactionComplete = state['progress']
+                                    ['transactionComplete'] ??
+                                false;
+                            _selectedOption =
+                                state['progress']['selectedOption'];
+                          });
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
 
             // MC Luwalhati character
             AnimatedPositioned(
@@ -403,7 +459,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed('/');
                     },
                     child: Image.asset(
                       'assets/ui/back_arrow.png',
@@ -424,7 +480,44 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => debugPrint('Phone tapped'),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter1',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': _recordCollection,
+                            'records': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                _recordCollection = List<dynamic>.from(
+                                    state['progress']['recordCollection'] ??
+                                        []);
+                                if (state['progress']['records'] != null) {
+                                  GameState.records = List<dynamic>.from(
+                                      state['progress']['records']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
                     child: Image.asset(
                       'assets/ui/tablet_icon.png',
                       width: w * 0.055,

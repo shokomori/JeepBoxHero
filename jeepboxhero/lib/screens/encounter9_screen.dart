@@ -6,9 +6,11 @@ import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter10_screen.dart';
+import '../components/ui/phone_save_load_popup.dart';
 
 class Encounter9Screen extends StatefulWidget {
-  const Encounter9Screen({super.key});
+  final Map<String, dynamic>? progress;
+  const Encounter9Screen({this.progress, super.key});
 
   @override
   State<Encounter9Screen> createState() => _Encounter9ScreenState();
@@ -249,13 +251,236 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
         onTap: showOptions ? null : _nextDialogue,
         child: Stack(
           children: [
+            // Background
             Positioned.fill(
-              child: Image.asset('assets/backgrounds/shop_bg.png',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                return Container(color: Colors.grey[300]);
-              }),
+              child: Image.asset(
+                'assets/backgrounds/shop_bg.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(color: Colors.grey[300]);
+                },
+              ),
             ),
+
+            // Top left: Back arrow and Phone icon
+            Positioned(
+              left: 16,
+              top: 16,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
+                    },
+                    child: Image.asset(
+                      'assets/ui/back_arrow.png',
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.arrow_back, size: 30),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => PhoneSaveLoadPopup(
+                          encounterId: 'encounter9',
+                          progress: {
+                            'dialogueIndex': _dialogueIndex,
+                            'albumFound': _albumFound,
+                            'transactionComplete': _transactionComplete,
+                            'selectedOption': _selectedOption,
+                            'recordCollection': GameState.records,
+                          },
+                          onLoad: (state) {
+                            if (state != null) {
+                              setState(() {
+                                _dialogueIndex =
+                                    state['progress']['dialogueIndex'] ?? 0;
+                                _albumFound =
+                                    state['progress']['albumFound'] ?? false;
+                                _transactionComplete = state['progress']
+                                        ['transactionComplete'] ??
+                                    false;
+                                _selectedOption =
+                                    state['progress']['selectedOption'];
+                                if (state['progress']['recordCollection'] !=
+                                    null) {
+                                  GameState.records =
+                                      List<Map<String, dynamic>>.from(
+                                          state['progress']
+                                              ['recordCollection']);
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/ui/tablet_icon.png',
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.phone, size: 30),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Top right: Cart and Records icons with badges
+            Positioned(
+              right: 16,
+              top: 16,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CartScreen(),
+                        ),
+                      );
+
+                      if (result == 'purchase_complete' && mounted) {
+                        _onPurchaseComplete();
+                      } else if (mounted) {
+                        setState(() {});
+                      }
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Image.asset(
+                          'assets/ui/cart_icon.png',
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: w * 0.055,
+                              height: w * 0.055,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.shopping_cart, size: 30),
+                            );
+                          },
+                        ),
+                        if (GameState.cartItems.isNotEmpty)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              child: Text(
+                                '${GameState.cartItems.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RecordsScreen(),
+                        ),
+                      );
+                      if (mounted) setState(() {});
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Image.asset(
+                          'assets/ui/records_icon.png',
+                          width: w * 0.055,
+                          height: w * 0.055,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: w * 0.055,
+                              height: w * 0.055,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.library_music, size: 30),
+                            );
+                          },
+                        ),
+                        if (GameState.records.isNotEmpty)
+                          Positioned(
+                            right: -6,
+                            top: -6,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              child: Text(
+                                '${GameState.records.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Bibi character (left)
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
@@ -264,201 +489,116 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
-                  _isCustomerSpeaking()
-                      ? 'assets/characters/bibi_talking.png'
-                      : 'assets/characters/bibi.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                return Container(color: Colors.transparent);
-              }),
+                _isCustomerSpeaking()
+                    ? 'assets/characters/bibi_talking.png'
+                    : 'assets/characters/bibi.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(color: Colors.transparent);
+                },
+              ),
             ),
+
+            // Tito Ramon
             Positioned(
               right: w * 0.05,
               top: h * 0.15,
               width: w * 0.25,
               height: h * 0.40,
               child: Opacity(
-                  opacity: 0.7,
-                  child: Image.asset(
-                      _isTitoSpeaking()
-                          ? 'assets/characters/tito_ramon_speaking.png'
-                          : 'assets/characters/tito_ramon.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
+                opacity: 0.7,
+                child: Image.asset(
+                  _isTitoSpeaking()
+                      ? 'assets/characters/tito_ramon_speaking.png'
+                      : 'assets/characters/tito_ramon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
                     return Container(color: Colors.transparent);
-                  })),
+                  },
+                ),
+              ),
             ),
+
+            // Table
             Positioned(
-                left: 0,
-                right: 0,
-                bottom: -h * 0.05,
-                height: h * 0.38,
-                child: Image.asset('assets/ui/table.png', fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) {
+              left: 0,
+              right: 0,
+              bottom: -h * 0.05,
+              height: h * 0.38,
+              child: Image.asset(
+                'assets/ui/table.png',
+                fit: BoxFit.fill,
+                errorBuilder: (context, error, stackTrace) {
                   return Container(color: Colors.brown[200]);
-                })),
+                },
+              ),
+            ),
+
+            // Album on table
             if (_albumFound)
               Positioned(
-                  left: w * 0.35,
-                  bottom: h * 0.12,
-                  width: w * 0.25,
-                  height: w * 0.25,
-                  child: Image.asset('assets/albums/bini_talaarawan.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
+                left: w * 0.35,
+                bottom: h * 0.12,
+                width: w * 0.25,
+                height: w * 0.25,
+                child: Image.asset(
+                  'assets/albums/bini_talaarawan.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
                     return Container(
-                        color: Colors.grey[400],
-                        child:
-                            const Center(child: Icon(Icons.album, size: 64)));
-                  })),
+                      color: Colors.grey[400],
+                      child: const Center(child: Icon(Icons.album, size: 64)),
+                    );
+                  },
+                ),
+              ),
+
+            // Folder
             Positioned(
-                left: w * 0.03,
-                bottom: h * 0.05,
-                width: w * 0.38,
-                height: h * 0.46,
-                child: GestureDetector(
-                    onTap: () => debugPrint('Folder tapped'),
-                    child: Image.asset('assets/ui/closed_folder.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                      return Container(color: Colors.transparent);
-                    }))),
+              left: w * 0.03,
+              bottom: h * 0.05,
+              width: w * 0.38,
+              height: h * 0.46,
+              child: GestureDetector(
+                onTap: () => debugPrint('Folder tapped'),
+                child: Image.asset(
+                  'assets/ui/closed_folder.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: Colors.transparent);
+                  },
+                ),
+              ),
+            ),
+
+            // Cash box
             Positioned(
-                right: -w * 0.15,
-                bottom: -h * 0.03,
-                width: w * 0.85,
-                height: h * 0.65,
-                child: GestureDetector(
-                    onTap: () => debugPrint('Cash box tapped'),
-                    child: Image.asset('assets/ui/cash_box.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                      return Container(color: Colors.transparent);
-                    }))),
+              right: -w * 0.15,
+              bottom: -h * 0.03,
+              width: w * 0.85,
+              height: h * 0.65,
+              child: GestureDetector(
+                onTap: () => debugPrint('Cash box tapped'),
+                child: Image.asset(
+                  'assets/ui/cash_box.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: Colors.transparent);
+                  },
+                ),
+              ),
+            ),
+
+            // Dialogue Box or Options
             if (!_customerExiting && (currentDialogue != null || showOptions))
               Positioned(
-                  left: w * 0.04,
-                  right: w * 0.04,
-                  bottom: h * 0.01,
-                  child: showOptions
-                      ? _buildDialogueOptions(w, h)
-                      : _buildDialogueBox(currentDialogue!, w, h)),
-            Positioned(
-                left: 16,
-                top: 16,
-                child: Row(children: [
-                  GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Image.asset('assets/ui/back_arrow.png',
-                          width: w * 0.055, height: w * 0.055,
-                          errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                            width: w * 0.055,
-                            height: w * 0.055,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.arrow_back, size: 30));
-                      })),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                      onTap: () => debugPrint('Phone tapped'),
-                      child: Image.asset('assets/ui/tablet_icon.png',
-                          width: w * 0.055, height: w * 0.055,
-                          errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                            width: w * 0.055,
-                            height: w * 0.055,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(Icons.phone, size: 30));
-                      }))
-                ])),
-            Positioned(
-                right: 16,
-                top: 16,
-                child: Row(children: [
-                  GestureDetector(
-                      onTap: () async {
-                        final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CartScreen()));
-                        if (result == 'purchase_complete' && mounted) {
-                          _onPurchaseComplete();
-                        } else if (mounted) setState(() {});
-                      },
-                      child: Stack(clipBehavior: Clip.none, children: [
-                        Image.asset('assets/ui/cart_icon.png',
-                            width: w * 0.055, height: w * 0.055,
-                            errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                              width: w * 0.055,
-                              height: w * 0.055,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(Icons.shopping_cart, size: 30));
-                        }),
-                        if (GameState.cartItems.isNotEmpty)
-                          Positioned(
-                              right: -6,
-                              top: -6,
-                              child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle),
-                                  constraints: const BoxConstraints(
-                                      minWidth: 20, minHeight: 20),
-                                  child: Text('${GameState.cartItems.length}',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center)))
-                      ])),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                      onTap: () async {
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const RecordsScreen()));
-                        if (mounted) setState(() {});
-                      },
-                      child: Stack(clipBehavior: Clip.none, children: [
-                        Image.asset('assets/ui/records_icon.png',
-                            width: w * 0.055, height: w * 0.055,
-                            errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                              width: w * 0.055,
-                              height: w * 0.055,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(Icons.library_music, size: 30));
-                        }),
-                        if (GameState.records.isNotEmpty)
-                          Positioned(
-                              right: -6,
-                              top: -6,
-                              child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle),
-                                  constraints: const BoxConstraints(
-                                      minWidth: 20, minHeight: 20),
-                                  child: Text('${GameState.records.length}',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center)))
-                      ]))
-                ])),
+                left: w * 0.04,
+                right: w * 0.04,
+                bottom: h * 0.01,
+                child: showOptions
+                    ? _buildDialogueOptions(w, h)
+                    : _buildDialogueBox(currentDialogue!, w, h),
+              ),
           ],
         ),
       ),
@@ -470,21 +610,23 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
       constraints: BoxConstraints(maxHeight: h * 0.25),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
       decoration: BoxDecoration(
-          color: dialogue['type'] == 'narration'
-              ? Colors.black.withOpacity(0.75)
-              : Colors.white.withOpacity(0.85),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: dialogue['type'] == 'narration'
-                  ? Colors.white70
-                  : Colors.black87,
-              width: 2.5),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ]),
+        color: dialogue['type'] == 'narration'
+            ? Colors.black.withOpacity(0.75)
+            : Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color:
+              dialogue['type'] == 'narration' ? Colors.white70 : Colors.black87,
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: dialogue['type'] == 'narration'
@@ -492,39 +634,54 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
             : CrossAxisAlignment.start,
         children: [
           if (dialogue['speaker'] != null)
-            Text(dialogue['speaker'],
-                style: TextStyle(
-                    fontSize: w * 0.017,
-                    fontWeight: FontWeight.bold,
-                    color: dialogue['type'] == 'narration'
-                        ? Colors.white
-                        : Colors.black),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+            Text(
+              dialogue['speaker'],
+              style: TextStyle(
+                fontSize: w * 0.017,
+                fontWeight: FontWeight.bold,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
           Flexible(
-              child: SingleChildScrollView(
-                  child: Text(dialogue['text'] ?? '',
-                      style: TextStyle(
-                          fontSize: w * 0.014,
-                          height: 1.35,
-                          color: dialogue['type'] == 'narration'
-                              ? Colors.white
-                              : Colors.black,
-                          fontStyle: dialogue['type'] == 'narration'
-                              ? FontStyle.italic
-                              : FontStyle.normal)))),
+            child: SingleChildScrollView(
+              child: Text(
+                dialogue['text'] ?? '',
+                style: TextStyle(
+                  fontSize: w * 0.014,
+                  height: 1.35,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white
+                      : Colors.black,
+                  fontStyle: dialogue['type'] == 'narration'
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                ),
+                textAlign: dialogue['type'] == 'narration'
+                    ? TextAlign.center
+                    : TextAlign.left,
+              ),
+            ),
+          ),
           if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
             SizedBox(height: h * 0.006),
             Align(
-                alignment: Alignment.centerRight,
-                child: Text('▼ Tap to continue',
-                    style: TextStyle(
-                        fontSize: w * 0.011,
-                        fontStyle: FontStyle.italic,
-                        color: dialogue['type'] == 'narration'
-                            ? Colors.white70
-                            : Colors.black54)))
+              alignment: Alignment.centerRight,
+              child: Text(
+                '▼ Tap to continue',
+                style: TextStyle(
+                  fontSize: w * 0.011,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white70
+                      : Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
           ],
         ],
       ),
@@ -542,24 +699,29 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
       constraints: BoxConstraints(maxHeight: h * 0.38),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.008),
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.90),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black87, width: 2.5),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ]),
+        color: Colors.white.withOpacity(0.90),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black87, width: 2.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Choose your response:',
-              style: TextStyle(
-                  fontSize: w * 0.016,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+          Text(
+            'Choose your response:',
+            style: TextStyle(
+              fontSize: w * 0.016,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
           SizedBox(height: h * 0.008),
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: h * 0.26),
@@ -576,13 +738,16 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: w * 0.02, vertical: h * 0.01),
                         decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                                color: Colors.grey[400]!, width: 1.5)),
-                        child: Text('${option['value']}: ${option['text']}',
-                            style: TextStyle(
-                                fontSize: w * 0.014, color: Colors.black87)),
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                          border:
+                              Border.all(color: Colors.grey[400]!, width: 1.5),
+                        ),
+                        child: Text(
+                          '${option['value']}: ${option['text']}',
+                          style: TextStyle(
+                              fontSize: w * 0.014, color: Colors.black87),
+                        ),
                       ),
                     ),
                   );
