@@ -35,19 +35,19 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
       'type': 'dialogue',
       'text':
           'I need… that record. The one that sounds like crying into a pillow at 2 a.m. Her voice was fragile, breaking but beautiful. Every song felt like she wrote it just to survive heartbreak.',
-      'speaker': 'Mara (sniffling)',
+      'speaker': 'Mara',
     },
     {
       'type': 'dialogue',
       'text':
           'Ah, the patron saint of tears. You’ll find her in the modern section.',
-      'speaker': 'Tito Ramon (softly)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'The cover was quiet, muted… like she wanted to hide, but couldn\'t stop singing.',
-      'speaker': 'Mara (wiping her eyes)',
+      'speaker': 'Mara',
     },
   ];
 
@@ -64,12 +64,12 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
     {
       'type': 'dialogue',
       'text': 'Yes. This is it. Maybe I\'ll cry less with this, or maybe more.',
-      'speaker': 'Mara (clutching it)',
+      'speaker': 'Mara',
     },
     {
       'type': 'dialogue',
       'text': 'Either way, the record will understand.',
-      'speaker': 'Tito Ramon (half-smile)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
@@ -157,7 +157,7 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
               'The player flips through muted pastel covers until finding one that radiates quiet sorrow.',
           successDialogue:
               '"Yes. This is it. Maybe I\'ll cry less with this, or maybe more."',
-          successSpeaker: 'Mara (clutching it)',
+          successSpeaker: 'Mara',
           wrongAlbumHint:
               'Look for a muted pastel cover with a fragile, intimate portrait in the Contemporary/Ballads section.',
         ),

@@ -36,18 +36,18 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
       'type': 'dialogue',
       'text':
           'I crave chaos. A record stitched with heartbreak and glitter, funk and rock, disco and despair. A masquerade of sound—loud, beautiful madness.',
-      'speaker': 'Shoko (dramatic)',
+      'speaker': 'Shoko',
     },
     {
       'type': 'dialogue',
       'text': 'Ah, noise dressed in colors. That\'s your gospel, Shoko.',
-      'speaker': 'Tito Ramon (chuckling)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'The cover was a carnival—masks, wild colors, distorted faces. Like a fever dream I want to relive.',
-      'speaker': 'Shoko (grinning)',
+      'speaker': 'Shoko',
     },
   ];
 
@@ -55,7 +55,7 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Check the Alternative/Experimental section.\n• Look for a surreal, neon-drenched cover—masks grinning, shadows dancing.\n• A carnival of wild colors and distorted faces.',
+          '• Check the Alternative/Experimental section.\n• Look for a surreal, neon-drenched cover—masks grinning, shadows dancing.\n• A carnival of wild colors and distorted faces.',
       'speaker': null,
     },
   ];
@@ -64,17 +64,17 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
     {
       'type': 'dialogue',
       'text': 'Ah, my beautiful disaster. We reunite.',
-      'speaker': 'Shoko (hugging it)',
+      'speaker': 'Shoko',
     },
     {
       'type': 'dialogue',
       'text': 'Don\'t let it swallow you whole, Shoko.',
-      'speaker': 'Tito Ramon (shaking his head)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -83,7 +83,7 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nHe clutches the record to his chest, eyes bright with wild satisfaction. With a theatrical bow, he disappears into the night, humming that same discordant tune.',
+          'He clutches the record to his chest, eyes bright with wild satisfaction. With a theatrical bow, he disappears into the night, humming that same discordant tune.',
       'speaker': null,
     },
     {
@@ -165,7 +165,7 @@ class _Encounter6ScreenState extends State<Encounter6Screen> {
           successNarration:
               'In the Alternative section, you find it—a surreal explosion of neon, masks grinning wildly, colors bleeding into each other like a fever dream.',
           successDialogue: '"Ah, my beautiful disaster. We reunite."',
-          successSpeaker: 'Shoko (hugging it)',
+          successSpeaker: 'Shoko',
           wrongAlbumHint:
               'Look for a carnival of wild colors—masks, distorted faces, neon chaos in the Alternative/Experimental section.',
         ),

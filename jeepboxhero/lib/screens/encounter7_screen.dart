@@ -35,19 +35,19 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
       'type': 'dialogue',
       'text':
           'Oh, honey! These floors remember me! I\'m looking for that record—the one that turned every sala into a dance floor. The grooves were simple, sweet, made for hips and heartbeats. Everyone knew the steps.',
-      'speaker': 'Didi Disco (twirling)',
+      'speaker': 'Didi Disco',
     },
     {
       'type': 'dialogue',
       'text':
           'You mean the queens of primetime? Even my tito tried those moves after a few drinks.',
-      'speaker': 'Tito Ramon (laughing)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'The cover was fierce—sparkles, sass, a group that looked unstoppable. That\'s the fever I need back.',
-      'speaker': 'Didi Disco (giggling)',
+      'speaker': 'Didi Disco',
     },
   ];
 
@@ -64,13 +64,13 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
     {
       'type': 'dialogue',
       'text': 'Yes! My queens! This is how you bring life to the party.',
-      'speaker': 'Didi Disco (clapping)',
+      'speaker': 'Didi Disco',
     },
     {
       'type': 'dialogue',
       'text':
           'Careful, Didi. This shop\'s floor isn\'t built for your footwork.',
-      'speaker': 'Tito Ramon (smirking)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
@@ -82,8 +82,7 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
   final List<Map<String, dynamic>> _finalDialogues = [
     {
       'type': 'narration',
-      'text':
-          '[Narration]\n\nShe winks, record in hand, already dancing out the door.',
+      'text': 'She winks, record in hand, already dancing out the door.',
       'speaker': null,
     },
   ];
@@ -159,7 +158,7 @@ class _Encounter7ScreenState extends State<Encounter7Screen> {
               'Flipping through the disco section, you find a sleeve bursting with glam—bold colors, a fierce all-girl group ready to perform.',
           successDialogue:
               '"Yes! My queens! This is how you bring life to the party."',
-          successSpeaker: 'Didi Disco (clapping)',
+          successSpeaker: 'Didi Disco',
           wrongAlbumHint:
               'Look for a bold, glammed-up all-girl group cover in the Disco aisle.',
         ),

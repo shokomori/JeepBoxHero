@@ -35,19 +35,19 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
       'type': 'dialogue',
       'text':
           'Omg! Please tell me you still have it—the pastel diary album, doodles on the cover like teenage secrets. Every track is like falling in love for the first time. My bias owns this era.',
-      'speaker': 'Bibi G. (excited)',
+      'speaker': 'Bibi G.',
     },
     {
       'type': 'dialogue',
       'text':
           'Ah, the new queens of pop. Their fans fill the shop faster than my records do.',
-      'speaker': 'Tito Ramon (laughing)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'I need it for my collection. Pink cover, glitter doodles, everything so… cute it hurts.',
-      'speaker': 'Bibi G. (pouting)',
+      'speaker': 'Bibi G.',
     },
   ];
 
@@ -63,12 +63,12 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
     {
       'type': 'dialogue',
       'text': 'Yes! Talaarawan era supremacy! I love them so much!',
-      'speaker': 'Bibi G. (squealing)',
+      'speaker': 'Bibi G.',
     },
     {
       'type': 'dialogue',
       'text': 'Careful, Bibi. Don\'t faint before the checkout.',
-      'speaker': 'Tito Ramon (smiling)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
@@ -156,7 +156,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               'A bright pastel sleeve appears, doodled with hearts and notes.',
           successDialogue:
               '"Yes! Talaarawan era supremacy! I love them so much!"',
-          successSpeaker: 'Bibi G. (squealing)',
+          successSpeaker: 'Bibi G.',
           wrongAlbumHint:
               'Look for a pastel diary-like sleeve covered in doodles in the P-Pop shelf.',
         ),

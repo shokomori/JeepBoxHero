@@ -38,19 +38,19 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
       'type': 'dialogue',
       'text':
           'Yo! Still standing, Jeep Box! Back in the day, this place spun the soundtrack to my first battles. There\'s one record I need again—Tagalog verses slicing through English beats, fire and pride all in one. First of its kind.',
-      'speaker': 'MC Luwalhati (grinning)',
+      'speaker': 'MC Luwalhati',
     },
     {
       'type': 'dialogue',
       'text':
           'Francis M would\'ve liked you, kid. Always rhyming like the streets were your stage.',
-      'speaker': 'Tito Ramon (smiling)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'All I remember is the cover—loud, bold, like it was daring you to press play. That\'s the album that lit my fire.',
-      'speaker': 'MC Luwalhati (laughing)',
+      'speaker': 'MC Luwalhati',
     },
   ];
 
@@ -58,7 +58,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Navigate to the Hip-Hop section.\n• Look for a vibrant, graffiti-like cover featuring a man in shades.\n• This is the first album that brought Pinoy rap to the mainstream.',
+          '• Navigate to the Hip-Hop section.\n• Look for a vibrant, graffiti-like cover featuring a man in shades.\n• This is the first album that brought Pinoy rap to the mainstream.',
       'speaker': null,
     },
   ];
@@ -67,17 +67,17 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     {
       'type': 'dialogue',
       'text': 'There it is. The first king of Pinoy rap. Still untouchable.',
-      'speaker': 'MC Luwalhati (snapping his fingers)',
+      'speaker': 'MC Luwalhati',
     },
     {
       'type': 'dialogue',
       'text': 'Legends don\'t fade, they echo.',
-      'speaker': 'Tito Ramon (grinning)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -187,7 +187,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               'You flip through hip-hop sleeves until a vibrant, graffiti-like cover emerges—a man in shades, looking unshakable.',
           successDialogue:
               '"There it is. The first king of Pinoy rap. Still untouchable."',
-          successSpeaker: 'MC Luwalhati (snapping his fingers)',
+          successSpeaker: 'MC Luwalhati',
           wrongAlbumHint:
               'Look for a vibrant, graffiti-like cover with a man in shades. The first Pinoy rap album!',
         ),

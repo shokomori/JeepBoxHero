@@ -36,19 +36,19 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
       'type': 'dialogue',
       'text':
           'There was a record once… a voice as clear as glass, trained on Broadway, but still ours. She made the world stop and listen, and for once, we were heard.',
-      'speaker': 'Aling Fe (nostalgic)',
+      'speaker': 'Aling Fe',
     },
     {
       'type': 'dialogue',
       'text':
           'A voice that could break hearts in English or Tagalog. You want to hear it again, don\'t you?',
-      'speaker': 'Tito Ramon (soft smile)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'The cover was modest—just her portrait, smiling gently, as if she knew the weight she carried. That\'s the one.',
-      'speaker': 'Aling Fe (nodding)',
+      'speaker': 'Aling Fe',
     },
   ];
 
@@ -56,7 +56,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Check the Classics & Kundiman section.\n• Look for a graceful portrait cover—a young woman poised with elegance.\n• A modest cover with her smiling gently.',
+          '• Check the Classics & Kundiman section.\n• Look for a graceful portrait cover—a young woman poised with elegance.\n• A modest cover with her smiling gently.',
       'speaker': null,
     },
   ];
@@ -65,17 +65,17 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
     {
       'type': 'dialogue',
       'text': 'Still as radiant as I remember. A voice that never ages.',
-      'speaker': 'Aling Fe (holding it delicately)',
+      'speaker': 'Aling Fe',
     },
     {
       'type': 'dialogue',
       'text': 'And neither do memories, Aling Fe.',
-      'speaker': 'Tito Ramon (nodding)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -84,7 +84,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nShe leaves, humming softly, her steps as graceful as her song. The melody lingers in the air long after she\'s gone.',
+          'She leaves, humming softly, her steps as graceful as her song. The melody lingers in the air long after she\'s gone.',
       'speaker': null,
     },
     {
@@ -167,7 +167,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               'In the Classics section, you find a graceful portrait—a young woman poised with elegance, her smile gentle and knowing.',
           successDialogue:
               '"Still as radiant as I remember. A voice that never ages."',
-          successSpeaker: 'Aling Fe (holding it delicately)',
+          successSpeaker: 'Aling Fe',
           wrongAlbumHint:
               'Look for a modest portrait cover with a graceful smile in the Classics & Kundiman section.',
         ),

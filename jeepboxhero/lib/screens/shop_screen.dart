@@ -28,7 +28,7 @@ class _ShopScreenState extends State<ShopScreen> {
     {
       'type': 'narration',
       'text':
-          '[Scene: Inside the shop]\n\nStacks of vinyls and cassettes line the dusty shelves. Posters of old OPM bands cling to the walls. A guitar leans quietly in the corner.',
+          'Stacks of vinyls and cassettes line the dusty shelves. Posters of old OPM bands cling to the walls. A guitar leans quietly in the corner.',
       'speaker': null,
     },
     {
@@ -65,18 +65,18 @@ class _ShopScreenState extends State<ShopScreen> {
       'type': 'dialogue',
       'text':
           'Alright, rookie. First lesson\'s on me. Let\'s see if you can find something special—Up Dharma Down\'s last album, UDD. People say it\'s their most mature work, stripped down but honest. Synths, groove, heartache, all in one.',
-      'speaker': 'Tito Ramon (smirking)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'Check under \'U\'. The name\'s shorter now, just three letters. That\'s how you\'ll spot it.',
-      'speaker': 'Tito Ramon (pointing toward the shelves)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Instructions]\n\n• Move around with the controls to navigate the shelves.\n• Interact with records to inspect them.\n• Locate UDD and bring it back to Tito Ramon.',
+          '• Move around with the controls to navigate the shelves.\n• Interact with records to inspect them.\n• Locate UDD and bring it back to Tito Ramon.',
       'speaker': null,
     },
   ];
@@ -91,7 +91,7 @@ class _ShopScreenState extends State<ShopScreen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart (top right corner).\n• Fill in the details of the transaction (UDD – Up Dharma Down).\n• Hand over the "change" to Tito Ramon.',
+          '• Open the cart (top right corner).\n• Fill in the details of the transaction (UDD – Up Dharma Down).\n• Hand over the "change" to Tito Ramon.',
       'speaker': null,
     },
   ];
@@ -100,14 +100,14 @@ class _ShopScreenState extends State<ShopScreen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nTito Ramon takes the record from your hands, smiling faintly as he runs his fingers over the sleeve.',
+          'Tito Ramon takes the record from your hands, smiling faintly as he runs his fingers over the sleeve.',
       'speaker': null,
     },
     {
       'type': 'dialogue',
       'text':
           'Not bad for your first dig. Remember, every album you pull from these shelves isn\'t just music—it\'s a piece of someone\'s life. Treat it that way.',
-      'speaker': 'Tito Ramon (patting your shoulder)',
+      'speaker': 'Tito Ramon',
     },
   ];
 
@@ -169,7 +169,7 @@ class _ShopScreenState extends State<ShopScreen> {
               'You scan the rows of vinyl until your hand lands on a sleek black-and-white cover with UDD embossed across it. Carefully, you lift it out and walk it over.',
           successDialogue:
               '"There you go. Eyes sharp, hands steady. This one marks the band\'s evolution—less spectacle, more intimacy. Fans call it the sound of moving on."',
-          successSpeaker: 'Tito Ramon (nodding approvingly)',
+          successSpeaker: 'Tito Ramon',
           wrongAlbumHint: 'Remember, check under "U"!',
         ),
       ),

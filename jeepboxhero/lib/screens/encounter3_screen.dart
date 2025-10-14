@@ -67,24 +67,24 @@ class _Encounter3ScreenState extends State<Encounter3Screen> {
       'type': 'dialogue',
       'text':
           'It\'s still here… Jeep Box Records. I thought this place closed down years ago.',
-      'speaker': 'Ysa Dalisay (looking around softly)',
+      'speaker': 'Ysa Dalisay',
     },
     {
       'type': 'dialogue',
       'text':
           'Closed? Nah. Just got quiet for a while. And look who the breeze carried in. Ysa Dalisay. The girl who could turn diary pages into chart-toppers.',
-      'speaker': 'Tito Ramon (grinning)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'Those songs were just… little secrets I never thought the world would hear. Tonight, I\'m not looking for mine though. There was this record—painted cover, like watercolors bleeding into each other. The voice on it felt so young, but it carried the kind of hurt only honesty can bring. Do you know what I mean?',
-      'speaker': 'Ysa Dalisay (smiling faintly)',
+      'speaker': 'Ysa Dalisay',
     },
     {
       'type': 'dialogue',
       'text': 'She\'s looking for that one. You\'ll know it when you see it.',
-      'speaker': 'Tito Ramon (to you, with a nod)',
+      'speaker': 'Tito Ramon',
     },
   ];
 
@@ -92,7 +92,7 @@ class _Encounter3ScreenState extends State<Encounter3Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Check the Pop & Ballad aisle.\n• Look for a soft, painted cover with brush-like blues and pinks.\n• This one will feel like a lullaby captured on wax.',
+          '• Check the Pop & Ballad aisle.\n• Look for a soft, painted cover with brush-like blues and pinks.\n• This one will feel like a lullaby captured on wax.',
       'speaker': null,
     },
   ];
@@ -102,17 +102,17 @@ class _Encounter3ScreenState extends State<Encounter3Screen> {
       'type': 'dialogue',
       'text':
           'There it is… every song on here feels like a letter you were never meant to read. I used to play it on repeat, hoping the answers were hidden between the notes.',
-      'speaker': 'Ysa Dalisay (taking the record, clutching it to her chest)',
+      'speaker': 'Ysa Dalisay',
     },
     {
       'type': 'dialogue',
       'text': 'Careful, Ysa. Nostalgia can weigh heavier than heartbreak.',
-      'speaker': 'Tito Ramon (gentle smile)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -121,7 +121,7 @@ class _Encounter3ScreenState extends State<Encounter3Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nShe slips the record carefully into her tote bag. The shop door closes softly as she leaves, her humming lingering in the air like the final note of a lullaby.',
+          'She slips the record carefully into her tote bag. The shop door closes softly as she leaves, her humming lingering in the air like the final note of a lullaby.',
       'speaker': null,
     },
     {
@@ -204,8 +204,7 @@ class _Encounter3ScreenState extends State<Encounter3Screen> {
               'You flip through soft pop and ballad sleeves until a painted cover with blues and pinks emerges — a fragile, beautiful record.',
           successDialogue:
               '"There it is… every song on here feels like a letter you were never meant to read."',
-          successSpeaker:
-              'Ysa Dalisay (taking the record, clutching it to her chest)',
+          successSpeaker: 'Ysa Dalisay',
           wrongAlbumHint:
               'Look for a soft painted cover with brush-like blues and pinks in the Pop & Ballad aisle.',
         ),

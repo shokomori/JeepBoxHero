@@ -72,7 +72,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
       'type': 'dialogue',
       'text':
           'Kiko Agos. The legend himself. Didn\'t think I\'d see you here again. Still chasing old ghosts?',
-      'speaker': 'Tito Ramon (smirking)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
@@ -86,7 +86,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Check the rock section.\n• Look for a worn but proud sleeve labeled "Your Universe" by Kiko Agos.\n• This should be the first pressing.',
+          '• Check the rock section.\n• Look for a worn but proud sleeve labeled "Your Universe" by Kiko Agos.\n• This should be the first pressing.',
       'speaker': null,
     },
   ];
@@ -101,12 +101,12 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'dialogue',
       'text': 'Careful, Kiko. Memories can be louder than amplifiers.',
-      'speaker': 'Tito Ramon (smiling softly)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];

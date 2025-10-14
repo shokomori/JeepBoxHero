@@ -67,23 +67,23 @@ class _Encounter4ScreenState extends State<Encounter4Screen> {
       'type': 'dialogue',
       'text':
           'I\'m after something rare. Not just rhymes, but stories. The kind that hit like headlines—jeepney drivers, street kids, working folk. A record that bled truth in every verse.',
-      'speaker': 'DJ Quenta (low voice)',
+      'speaker': 'DJ Quenta',
     },
     {
       'type': 'dialogue',
       'text': 'Plenty rap about fame. Only a few rap about the real grind.',
-      'speaker': 'Tito Ramon (nodding)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text':
           'The cover was dark, simple. Like the city streets at midnight. But inside? Fire. That\'s what I need.',
-      'speaker': 'DJ Quenta (half-smile)',
+      'speaker': 'DJ Quenta',
     },
     {
       'type': 'dialogue',
       'text': 'You\'ll know it when you see it. Check the underground section.',
-      'speaker': 'Tito Ramon (to you, with a nod)',
+      'speaker': 'Tito Ramon',
     },
   ];
 
@@ -91,7 +91,7 @@ class _Encounter4ScreenState extends State<Encounter4Screen> {
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Check the Underground Hip-Hop section.\n• Look for a dark, simple cover with subdued tones.\n• This one will feel like the city streets at midnight.',
+          '• Check the Underground Hip-Hop section.\n• Look for a dark, simple cover with subdued tones.\n• This one will feel like the city streets at midnight.',
       'speaker': null,
     },
   ];
@@ -100,17 +100,17 @@ class _Encounter4ScreenState extends State<Encounter4Screen> {
     {
       'type': 'dialogue',
       'text': 'That\'s it. Manila\'s heartbeat on wax. Salamat, boss.',
-      'speaker': 'DJ Quenta (grinning faintly)',
+      'speaker': 'DJ Quenta',
     },
     {
       'type': 'dialogue',
       'text': 'Careful with that one—it cuts deeper than most.',
-      'speaker': 'Tito Ramon (chuckling)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
       'text':
-          '[Gameplay Prompt]\n\n• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
+          '• Open the cart and complete the transaction.\n• Fill in the album details correctly.\n• Process the payment.',
       'speaker': null,
     },
   ];
@@ -119,7 +119,7 @@ class _Encounter4ScreenState extends State<Encounter4Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nHe tucks the record under his arm, gives a quick nod of respect, and steps back into the night. The sound of his footsteps fades, leaving only the hum of the city beyond.',
+          'He tucks the record under his arm, gives a quick nod of respect, and steps back into the night. The sound of his footsteps fades, leaving only the hum of the city beyond.',
       'speaker': null,
     },
     {
@@ -202,7 +202,7 @@ class _Encounter4ScreenState extends State<Encounter4Screen> {
               'In the underground section, a record emerges—gritty design, subdued tones, its title etched like a street mural.',
           successDialogue:
               '"That\'s it. Manila\'s heartbeat on wax. Salamat, boss."',
-          successSpeaker: 'DJ Quenta (grinning faintly)',
+          successSpeaker: 'DJ Quenta',
           wrongAlbumHint:
               'Look for a dark, simple cover with subdued tones in the Underground Hip-Hop section.',
         ),

@@ -35,18 +35,18 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
       'type': 'dialogue',
       'text':
           'Boss, I just want the record that defined tambay life. The cover was bright yellow, looked almost silly—but the songs? They were everyone’s anthem. Played in kanto, in classrooms, even in protests. Still unbeaten.',
-      'speaker': 'Kokoy (grinning)',
+      'speaker': 'Kokoy',
     },
     {
       'type': 'dialogue',
       'text':
           'Ah, the voice of a generation. They made every kid a rocker overnight.',
-      'speaker': 'Tito Ramon (smirking)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'dialogue',
       'text': 'That’s the one. Bright as the sun, loud as our youth.',
-      'speaker': 'Kokoy (nodding)',
+      'speaker': 'Kokoy',
     },
   ];
 
@@ -62,12 +62,12 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
     {
       'type': 'dialogue',
       'text': 'Yes! Cutterpillow! The kanto never dies.',
-      'speaker': 'Kokoy (beaming)',
+      'speaker': 'Kokoy',
     },
     {
       'type': 'dialogue',
       'text': 'As long as someone sings along, Kokoy.',
-      'speaker': 'Tito Ramon (smiling)',
+      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
@@ -154,7 +154,7 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
           successNarration:
               'The player finds a striking yellow cover, playful yet iconic.',
           successDialogue: '"Yes! Cutterpillow! The kanto never dies."',
-          successSpeaker: 'Kokoy (beaming)',
+          successSpeaker: 'Kokoy',
           wrongAlbumHint:
               'Look for a bright yellow, iconic album in the Essentials shelf.',
         ),
