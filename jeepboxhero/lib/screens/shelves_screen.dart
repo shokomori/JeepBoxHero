@@ -28,7 +28,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
   final int _totalShelves = 4;
   int? _highlightedAlbumIndex;
 
-  // Shelf backgrounds and album data
   final List<Map<String, dynamic>> _shelvesData = [
     {
       'label': 'First Shelf',
@@ -38,19 +37,19 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'title': 'Kitchie Nadal',
           'artist': 'Kitchie Nadal',
           'year': '2004',
-          'cover': 'albums/kitchie_nadal.png',
+          'cover': 'assets/albums/kitchie_nadal.png',
         },
         {
           'title': 'Yo!',
           'artist': 'Francis M.',
           'year': '2012',
-          'cover': 'albums/francis_m_yo.png',
+          'cover': 'assets/albums/francis_m_yo.png',
         },
         {
           'title': 'Malaya',
           'artist': 'Moira Dela Torre',
           'year': '2018',
-          'cover': 'albums/moira_malaya.png',
+          'cover': 'assets/albums/moira_malaya.png',
         },
       ],
     },
@@ -62,13 +61,13 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'title': 'Lea Salonga',
           'artist': 'Lea Salonga',
           'year': '1993',
-          'cover': 'albums/lea_salonga.png',
+          'cover': 'assets/albums/lea_salonga.png',
         },
         {
           'title': 'Mga Kwento ng Makata',
           'artist': 'Gloc-9',
           'year': '2012',
-          'cover': 'albums/gloc9_kwento.png',
+          'cover': 'assets/albums/gloc9_kwento.png',
         },
       ],
     },
@@ -80,19 +79,19 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'title': 'Unang Putok',
           'artist': 'Sexbomb Girls',
           'year': '2002',
-          'cover': 'albums/sexbomb_unang.png',
+          'cover': 'assets/albums/sexbomb_unang.png',
         },
         {
           'title': 'Your Universe',
           'artist': 'Rico Blanco',
           'year': '2008',
-          'cover': 'albums/rico_your_universe.png',
+          'cover': 'assets/albums/rico_your_universe.png',
         },
         {
           'title': 'R2K',
           'artist': 'Regine Velasquez',
           'year': '1999',
-          'cover': 'albums/regine_r2k.png',
+          'cover': 'assets/albums/regine_r2k.png',
         },
       ],
     },
@@ -104,25 +103,25 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           'title': 'CLAPCLAPCLAP!',
           'artist': 'IV of Spades',
           'year': '2018',
-          'cover': 'albums/ivspades_clap.png',
+          'cover': 'assets/albums/ivspades_clap.png',
         },
         {
           'title': 'Talaarawan',
           'artist': 'BINI',
           'year': '2024',
-          'cover': 'albums/bini_talaarawan.png',
+          'cover': 'assets/albums/bini_talaarawan.png',
         },
         {
           'title': 'Cutterpillow',
           'artist': 'Eraserheads',
           'year': '2025',
-          'cover': 'albums/eraserheads_cutterpillow.png',
+          'cover': 'assets/albums/eraserheads_cutterpillow.png',
         },
         {
           'title': 'UDD',
           'artist': 'Up Dharma Down',
           'year': '2019',
-          'cover': 'albums/udd_album.png',
+          'cover': 'assets/albums/udd_album.png',
         },
       ],
     },
@@ -152,7 +151,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           .toString()
           .toLowerCase()
           .trim()
-          // remove punctuation and extra whitespace
           .replaceAll(RegExp(r"[^a-z0-9\s]"), '')
           .replaceAll(RegExp(r"\s+"), ' ');
     }
@@ -162,7 +160,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     final albumArtist = normalize(album['artist'] ?? '');
     final targetArtist = normalize(widget.targetAlbumArtist);
 
-    // Debugging output to help trace matching issues
     debugPrint('Matching album: "$albumTitle" vs targetTitle: "$targetTitle"');
     debugPrint(
         'Matching artist: "$albumArtist" vs targetArtist: "$targetArtist"');
@@ -178,14 +175,11 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
       _highlightedAlbumIndex = index;
     });
 
-    // Brief highlight before showing dialog
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         if (_isTargetAlbum(album)) {
-          debugPrint('Showing SUCCESS dialog');
           _showSuccessDialog(album);
         } else {
-          debugPrint('Showing WRONG album dialog');
           _showWrongAlbumDialog(album);
         }
       }
@@ -208,7 +202,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
         ),
         content: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (widget.successNarration.isNotEmpty) ...[
@@ -221,19 +214,15 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  widget.successNarration,
-                  style: const TextStyle(fontSize: 15, height: 1.4),
-                ),
+                Text(widget.successNarration,
+                    style: const TextStyle(fontSize: 15, height: 1.4)),
                 const SizedBox(height: 16),
               ],
               if (widget.successDialogue.isNotEmpty) ...[
                 Text(
                   '${widget.successSpeaker}:',
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                      fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -248,9 +237,8 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              debugPrint('Success button pressed - returning true');
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context, true); // Return to shop with success flag
+              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             style: TextButton.styleFrom(
               backgroundColor: Colors.green[700],
@@ -288,10 +276,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
           children: [
             Text(
               'This is "${album['title']}" by ${album['artist']} (${album['year']})',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 12),
             Text(hint),
@@ -312,76 +297,63 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     );
   }
 
+  /// --- NO ANIMATION VERSION ---
   Widget _buildBottomAlbumPreview(
       Map<String, dynamic> album, Size size, int index) {
     final isHighlighted = _highlightedAlbumIndex == index;
 
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 500 + (index * 100)),
-      tween: Tween(begin: 1.0, end: 0.0),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, size.height * 0.3 * value),
-          child: Opacity(
-            opacity: 1.0 - value,
-            child: child,
-          ),
-        );
-      },
-      child: GestureDetector(
-        onTap: () => _onAlbumTap(album, index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: size.width * 0.18,
-          height: size.width * 0.18,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: isHighlighted
-                ? Border.all(color: Colors.amber, width: 4)
-                : Border.all(color: Colors.white54, width: 2),
-            boxShadow: isHighlighted
-                ? [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.6),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    )
-                  ]
-                : null,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: Image.asset(
-              album['cover'],
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.album, color: Colors.white70, size: 32),
-                      const SizedBox(height: 4),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          album['artist'],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+    return GestureDetector(
+      onTap: () => _onAlbumTap(album, index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: size.width * 0.18,
+        height: size.width * 0.18,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: isHighlighted
+              ? Border.all(color: Colors.amber, width: 4)
+              : Border.all(color: Colors.white54, width: 2),
+          boxShadow: isHighlighted
+              ? [
+                  BoxShadow(
+                    color: Colors.amber.withOpacity(0.6),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  )
+                ]
+              : null,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.asset(
+            album['cover'],
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.black.withOpacity(0.3),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.album, color: Colors.white70, size: 32),
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        album['artist'],
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -396,7 +368,6 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Full screen shelf background
           Positioned.fill(
             child: Image.asset(
               currentShelf['background'],
@@ -411,10 +382,9 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
                         Icon(Icons.image_not_supported,
                             size: 64, color: Colors.white54),
                         SizedBox(height: 16),
-                        Text(
-                          'Shelf image not found',
-                          style: TextStyle(color: Colors.white70, fontSize: 18),
-                        ),
+                        Text('Shelf image not found',
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 18)),
                       ],
                     ),
                   ),
@@ -423,7 +393,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
             ),
           ),
 
-          // Left arrow button
+// Left arrow
           Positioned(
             left: 16,
             top: size.height * 0.48,
@@ -452,7 +422,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
             ),
           ),
 
-          // Right arrow button
+// Right arrow
           Positioned(
             right: 16,
             top: size.height * 0.48,
@@ -483,7 +453,7 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
             ),
           ),
 
-          // Bottom album previews with actual album covers
+// Albums bottom row (no animation)
           Positioned(
             left: 0,
             right: 0,

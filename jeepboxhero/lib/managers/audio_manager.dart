@@ -35,9 +35,6 @@ class AudioManager {
     final toLoad = <String>[]..addAll(defaultAssets);
     if (additionalAssets != null) toLoad.addAll(additionalAssets);
 
-    // Load filenames (FlameAudio's cache resolves assets/audio/ by default
-    // when the assets are declared under assets/audio/ in pubspec.yaml).
-    // Load assets individually so we can log any failures per file.
     try {
       for (final asset in toLoad) {
         try {
@@ -61,9 +58,6 @@ class AudioManager {
       {double? volume, bool loop = true, bool restart = false}) async {
     if (!_initialized) await initialize();
 
-    // Use the same key that was used during initialization. If callers
-    // passed 'audio/...' strip the prefix so we don't produce
-    // 'assets/audio/audio/...' which will fail on web.
     final name =
         filename.startsWith('audio/') ? filename.substring(6) : filename;
     _currentBgm = filename;
@@ -163,8 +157,6 @@ class AudioManager {
     _bgmVolume = volume.clamp(0.0, 1.0);
     if (_muted) return;
 
-    // FlameAudio's BGM does not provide a direct setVolume across players in
-    // all versions, so restart the current bgm with the new volume if playing.
     if (_bgmPlaying && _currentBgm != null) {
       await stopBgm();
       await playBgm(_currentBgm!, volume: _bgmVolume, restart: true);

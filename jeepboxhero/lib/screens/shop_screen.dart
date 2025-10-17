@@ -253,8 +253,8 @@ class _ShopScreenState extends State<ShopScreen> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              left: _customerExiting ? -w * 0.6 : w * 0.20,
-              right: _customerExiting ? w * 1.2 : w * 0.20,
+              left: _customerExiting ? -w * 0.6 : w * 0.05,
+              right: _customerExiting ? w * 1.2 : w * 0.40,
               top: h * 0.05,
               bottom: h * 0.28,
               child: Image.asset(
@@ -304,7 +304,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
             // Folder
             Positioned(
-              left: w * 0.03,
+              left: w * 0.00001, 
               bottom: h * 0.05,
               width: w * 0.38,
               height: h * 0.46,
@@ -439,7 +439,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed('/');
                     },
                     child: Image.asset(
                       'assets/ui/back_arrow.png',

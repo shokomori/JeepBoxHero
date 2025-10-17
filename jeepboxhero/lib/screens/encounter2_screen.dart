@@ -2,11 +2,13 @@ import '../components/ui/phone_save_load_popup.dart';
 // lib/screens/encounter2_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import 'encounter_features/vinyl_table_screen.dart';
 import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter3_screen.dart';
+import 'package:jeepboxhero/screens/encounter_features/receipt_table_screen.dart';
 
 class Encounter2Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -59,7 +61,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'narration',
       'text':
-          '[Scene: Jeep Box Records – Guitar Corner]\n\nA man walks in slowly, his leather jacket covered in faded band patches. His mullet is messy, and he wears sunglasses even indoors. He strums the air like a guitar as if he never left the stage.',
+          'A man walks in slowly, his leather jacket covered in faded band patches. His mullet is messy, and he wears sunglasses even indoors. He strums the air like a guitar as if he never left the stage.',
       'speaker': null,
     },
     {
@@ -71,10 +73,16 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'dialogue',
       'text':
-          'Kiko Agos. The legend himself. Didn\'t think I\'d see you here again. Still chasing old ghosts?',
+          'Rico, the legend himself. Didn\'t think I\'d see you here again. Still chasing old ghosts?',
       'speaker': 'Tito Ramon',
     },
     {
+      'type': 'dialogue',
+      'text':
+          'More like the ghosts are chasing me, Tito. I heard my old record—Your Universe—is lying around here. First pressing. I… pawned it back when times were rough. Guess I just want to hold it again.',
+      'speaker': 'Rico',
+    },
+        {
       'type': 'dialogue',
       'text':
           'More like the ghosts are chasing me, Tito. I heard my old record—Your Universe—is lying around here. First pressing. I… pawned it back when times were rough. Guess I just want to hold it again.',
@@ -86,7 +94,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'narration',
       'text':
-          '• Check the rock section.\n• Look for a worn but proud sleeve labeled "Your Universe" by Kiko Agos.\n• This should be the first pressing.',
+          '• Check the rock section.\n• Look for a worn but proud sleeve labeled "Your Universe" by Rico Blanco.\n• This should be the first pressing.',
       'speaker': null,
     },
   ];
@@ -97,11 +105,6 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
       'text':
           'There it is. My youth, pressed on wax. Thanks, kid. You don\'t know what this means to me.',
       'speaker': 'Rico',
-    },
-    {
-      'type': 'dialogue',
-      'text': 'Careful, Kiko. Memories can be louder than amplifiers.',
-      'speaker': 'Tito Ramon',
     },
     {
       'type': 'narration',
@@ -115,7 +118,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nThe bell above the shop door jingles as he leaves, his silhouette fading into the neon outside.',
+          'The bell above the shop door jingles as he leaves, his silhouette fading into the neon outside.',
       'speaker': null,
     },
     {
@@ -125,7 +128,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
     },
     {
       'type': 'dialogue',
-      'text': 'Careful, Kiko. Memories can be louder than amplifiers.',
+      'text': 'Careful, Rico. Memories can be louder than amplifiers.',
       'speaker': 'Tito Ramon',
     },
   ];
@@ -324,8 +327,8 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              left: _customerExiting ? -w * 0.6 : w * 0.10,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              left: _customerExiting ? -w * 0.6 : w * 0.12,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.05,
               bottom: h * 0.28,
               child: Image.asset(
@@ -346,7 +349,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
               width: w * 0.25,
               height: h * 0.40,
               child: Opacity(
-                opacity: 0.7,
+                opacity: 0.0,
                 child: Image.asset(
                   _isTitoSpeaking()
                       ? 'assets/characters/tito_ramon_speaking.png'
@@ -394,31 +397,55 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
               ),
 
             // Folder
-            Positioned(
-              left: w * 0.03,
-              bottom: h * 0.05,
-              width: w * 0.38,
-              height: h * 0.46,
-              child: GestureDetector(
-                onTap: () => debugPrint('Folder tapped'),
-                child: Image.asset(
-                  'assets/ui/closed_folder.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.transparent);
-                  },
+                Positioned(
+                left: w * 0.00001,
+                bottom: h * 0.05,
+                width: w * 0.38,
+                height: h * 0.46,
+                child: GestureDetector(
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 2),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.transparent);
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Cash box
+            // Cash box (clickable only if album found)
             Positioned(
               right: -w * 0.15,
               bottom: -h * 0.03,
               width: w * 0.85,
               height: h * 0.65,
               child: GestureDetector(
-                onTap: () => debugPrint('Cash box tapped'),
+                onTap: _albumFound
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VinylTableScreen(encounterNumber: 2),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Image.asset(
                   'assets/ui/cash_box.png',
                   fit: BoxFit.contain,
@@ -659,7 +686,7 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: dialogue['type'] == 'narration'
             ? CrossAxisAlignment.center
             : CrossAxisAlignment.start,
@@ -678,9 +705,8 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
               overflow: TextOverflow.ellipsis,
             ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
-          // make dialogue text scrollable but constrained so the Column can size properly
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: h * 0.16),
+          // allow the text area to flex when available height is small
+          Flexible(
             child: SingleChildScrollView(
               child: Text(
                 dialogue['text'] ?? '',
@@ -700,23 +726,22 @@ class _Encounter2ScreenState extends State<Encounter2Screen> {
               ),
             ),
           ),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '▼ Tap to continue',
-                style: TextStyle(
-                  fontSize: w * 0.011,
-                  color: dialogue['type'] == 'narration'
-                      ? Colors.white70
-                      : Colors.black54,
-                  fontStyle: FontStyle.italic,
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
                 ),
               ),
             ),
           ],
-        ],
       ),
     );
   }

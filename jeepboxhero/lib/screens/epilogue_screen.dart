@@ -13,9 +13,9 @@ class EpilogueScreen extends StatefulWidget {
 class _EpilogueScreenState extends State<EpilogueScreen> {
   int _pageIndex = 0;
   final List<String> _pages = [
-    '[Narration – Closing of the Day]\n\nThe neon signs outside hum softly as Jeep Box Records winds down. The shelves stand a little emptier, the receipt book carries fresh names, and the air is thick with the echoes of songs once more alive.',
-    'Tito Ramon (smiling as he turns the key on the door):\n"Not bad, kid. You’ve got the rhythm for this. Jeep Box has always been more than four walls and vinyl. It’s where music keeps breathing, where memories don’t fade. As long as there are people who listen, this place will never die."',
-    '[Narration – Closing of the Game]\n\nYou step outside, the streets of Cubao alive with jeepneys, laughter, and the glow of midnight lights. In your chest, a quiet certainty takes root—this shop is more than a job. It’s a stage for untold stories, a refuge for lost songs, and a bridge between generations.\n\nThe night wraps around you, but the music lingers. Tomorrow, the door will chime again, another soul will walk in, and another story will be waiting. Jeep Box Records is alive—and now, so are you in its rhythm.'
+    'The neon signs outside hum softly as Jeep Box Records winds down. The shelves stand a little emptier, the receipt book carries fresh names, and the air is thick with the echoes of songs once more alive.',
+    'Tito Ramon:\n"Not bad, kid. You’ve got the rhythm for this. Jeep Box has always been more than four walls and vinyl. It’s where music keeps breathing, where memories don’t fade. As long as there are people who listen, this place will never die."',
+    'You step outside, the streets of Cubao alive with jeepneys, laughter, and the glow of midnight lights. In your chest, a quiet certainty takes root—this shop is more than a job. It’s a stage for untold stories, a refuge for lost songs, and a bridge between generations.\n\nThe night wraps around you, but the music lingers. Tomorrow, the door will chime again, another soul will walk in, and another story will be waiting. Jeep Box Records is alive—and now, so are you in its rhythm.'
   ];
 
   @override
@@ -84,7 +84,7 @@ class _EpilogueScreenState extends State<EpilogueScreen> {
                   offset: _pageIndex >= 1 ? Offset.zero : const Offset(0.4, 0),
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeOut,
-                  child: Image.asset('assets/characters/tito_ramon.png',
+                  child: Image.asset('assets/characters/ramon_night.png',
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                     return Container(color: Colors.transparent);

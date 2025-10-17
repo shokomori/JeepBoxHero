@@ -1,12 +1,14 @@
 // lib/screens/encounter9_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import 'encounter_features/vinyl_table_screen.dart';
 import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter10_screen.dart';
 import '../components/ui/phone_save_load_popup.dart';
+import 'encounter_features/receipt_table_screen.dart';
 
 class Encounter9Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -28,7 +30,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
     {
       'type': 'narration',
       'text':
-          '[Scene: Jeep Box Records – P-Pop Shelf]\n\nA bubbly girl skips in, pastel nails tapping on her phone as she scrolls through fancams.',
+          'A bubbly girl skips in, pastel nails tapping on her phone as she scrolls through fancams.',
       'speaker': null,
     },
     {
@@ -54,7 +56,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
   final List<Map<String, dynamic>> _postChoiceDialogues = [
     {
       'type': 'narration',
-      'text': 'A bright pastel sleeve appears, doodled with hearts and notes.',
+      'text': '• Check the P-Pop section.\n• Look for a bright, modern cover—eight girls shining in pastel tones and youthful energy.\n• It feels like a diary come alive—dreamy, confident, and full of new beginnings.',
       'speaker': null,
     },
   ];
@@ -69,12 +71,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
       'type': 'dialogue',
       'text': 'Careful, Bibi. Don\'t faint before the checkout.',
       'speaker': 'Tito Ramon',
-    },
-    {
-      'type': 'narration',
-      'text': 'She skips out, hugging the record.',
-      'speaker': null,
-    },
+    }
   ];
 
   final List<Map<String, dynamic>> _finalDialogues = [
@@ -485,7 +482,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
               left: _customerExiting ? -w * 0.6 : w * 0.12,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
@@ -506,7 +503,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               width: w * 0.25,
               height: h * 0.40,
               child: Opacity(
-                opacity: 0.7,
+                opacity: 0.0,
                 child: Image.asset(
                   _isTitoSpeaking()
                       ? 'assets/characters/tito_ramon_speaking.png'
@@ -554,31 +551,55 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               ),
 
             // Folder
-            Positioned(
-              left: w * 0.03,
-              bottom: h * 0.05,
-              width: w * 0.38,
-              height: h * 0.46,
-              child: GestureDetector(
-                onTap: () => debugPrint('Folder tapped'),
-                child: Image.asset(
-                  'assets/ui/closed_folder.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.transparent);
-                  },
+                Positioned(
+                left: w * 0.00001,
+                bottom: h * 0.05,
+                width: w * 0.38,
+                height: h * 0.46,
+                child: GestureDetector(
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 9),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.transparent);
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Cash box
+            // Cash box (clickable only if album found)
             Positioned(
               right: -w * 0.15,
               bottom: -h * 0.03,
               width: w * 0.85,
               height: h * 0.65,
               child: GestureDetector(
-                onTap: () => debugPrint('Cash box tapped'),
+                onTap: _albumFound
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VinylTableScreen(encounterNumber: 9),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Image.asset(
                   'assets/ui/cash_box.png',
                   fit: BoxFit.contain,
@@ -605,7 +626,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
     );
   }
 
-  Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
+    Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.25),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
@@ -647,6 +668,7 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               overflow: TextOverflow.ellipsis,
             ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
+          // allow the text area to flex when available height is small
           Flexible(
             child: SingleChildScrollView(
               child: Text(
@@ -667,23 +689,22 @@ class _Encounter9ScreenState extends State<Encounter9Screen> {
               ),
             ),
           ),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '▼ Tap to continue',
-                style: TextStyle(
-                  fontSize: w * 0.011,
-                  color: dialogue['type'] == 'narration'
-                      ? Colors.white70
-                      : Colors.black54,
-                  fontStyle: FontStyle.italic,
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
                 ),
               ),
             ),
           ],
-        ],
       ),
     );
   }

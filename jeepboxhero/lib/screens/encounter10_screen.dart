@@ -7,6 +7,7 @@ import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/epilogue_screen.dart';
 import '../components/ui/phone_save_load_popup.dart';
+import 'encounter_features/receipt_table_screen.dart';
 
 class Encounter10Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -27,8 +28,7 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
   final List<Map<String, dynamic>> _dialogues = [
     {
       'type': 'narration',
-      'text':
-          '[Scene: Jeep Box Records – Essentials Shelf]\n\nA young man in slippers and a loose shirt ambles in.',
+      'text': 'A young man in slippers and a loose shirt ambles in.',
       'speaker': null,
     },
     {
@@ -53,7 +53,7 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
   final List<Map<String, dynamic>> _postChoiceDialogues = [
     {
       'type': 'narration',
-      'text': 'The player finds a striking yellow cover, playful yet iconic.',
+      'text': '• Check the OPM/Rock section.\n• Look for a blue cover with a strange, cartoonish figure—part dream, part chaos.\n• It’s playful but raw, like the sound of the ’90s bottled in neon nostalgia.',
       'speaker': null,
     },
   ];
@@ -68,11 +68,6 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
       'type': 'dialogue',
       'text': 'As long as someone sings along, Kokoy.',
       'speaker': 'Tito Ramon',
-    },
-    {
-      'type': 'narration',
-      'text': 'He bounces the ball once and heads out, record under his arm.',
-      'speaker': null,
     },
   ];
 
@@ -152,11 +147,11 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
           targetAlbumTitle: 'Cutterpillow',
           targetAlbumArtist: 'Eraserheads',
           successNarration:
-              'The player finds a striking yellow cover, playful yet iconic.',
+              'The player finds a striking blue cover, playful yet iconic.',
           successDialogue: '"Yes! Cutterpillow! The kanto never dies."',
           successSpeaker: 'Kokoy',
           wrongAlbumHint:
-              'Look for a bright yellow, iconic album in the Essentials shelf.',
+              'Look for a bright blue, iconic album in the Essentials shelf.',
         ),
       ),
     );
@@ -297,7 +292,7 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
               left: _customerExiting ? -w * 0.6 : w * 0.12,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
@@ -315,7 +310,7 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
                 width: w * 0.25,
                 height: h * 0.40,
                 child: Opacity(
-                    opacity: 0.7,
+                    opacity: 0.0,
                     child: Image.asset(
                         _isTitoSpeaking()
                             ? 'assets/characters/tito_ramon_speaking.png'
@@ -348,18 +343,38 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
                         child:
                             const Center(child: Icon(Icons.album, size: 64)));
                   })),
-            Positioned(
-                left: w * 0.03,
+            // Folder
+                Positioned(
+                left: w * 0.00001,
                 bottom: h * 0.05,
                 width: w * 0.38,
                 height: h * 0.46,
                 child: GestureDetector(
-                    onTap: () => debugPrint('Folder tapped'),
-                    child: Image.asset('assets/ui/closed_folder.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 10),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
                       return Container(color: Colors.transparent);
-                    }))),
+                    },
+                  ),
+                ),
+              ),
             Positioned(
                 right: -w * 0.15,
                 bottom: -h * 0.03,
@@ -547,26 +562,28 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
     );
   }
 
-  Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
+    Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.25),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
       decoration: BoxDecoration(
-          color: dialogue['type'] == 'narration'
-              ? Colors.black.withOpacity(0.75)
-              : Colors.white.withOpacity(0.85),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: dialogue['type'] == 'narration'
-                  ? Colors.white70
-                  : Colors.black87,
-              width: 2.5),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ]),
+        color: dialogue['type'] == 'narration'
+            ? Colors.black.withOpacity(0.75)
+            : Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color:
+              dialogue['type'] == 'narration' ? Colors.white70 : Colors.black87,
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: dialogue['type'] == 'narration'
@@ -574,41 +591,56 @@ class _Encounter10ScreenState extends State<Encounter10Screen> {
             : CrossAxisAlignment.start,
         children: [
           if (dialogue['speaker'] != null)
-            Text(dialogue['speaker'],
-                style: TextStyle(
-                    fontSize: w * 0.017,
-                    fontWeight: FontWeight.bold,
-                    color: dialogue['type'] == 'narration'
-                        ? Colors.white
-                        : Colors.black),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+            Text(
+              dialogue['speaker'],
+              style: TextStyle(
+                fontSize: w * 0.017,
+                fontWeight: FontWeight.bold,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
+          // allow the text area to flex when available height is small
           Flexible(
-              child: SingleChildScrollView(
-                  child: Text(dialogue['text'] ?? '',
-                      style: TextStyle(
-                          fontSize: w * 0.014,
-                          height: 1.35,
-                          color: dialogue['type'] == 'narration'
-                              ? Colors.white
-                              : Colors.black,
-                          fontStyle: dialogue['type'] == 'narration'
-                              ? FontStyle.italic
-                              : FontStyle.normal)))),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text('▼ Tap to continue',
-                    style: TextStyle(
-                        fontSize: w * 0.011,
-                        fontStyle: FontStyle.italic,
-                        color: dialogue['type'] == 'narration'
-                            ? Colors.white70
-                            : Colors.black54)))
+            child: SingleChildScrollView(
+              child: Text(
+                dialogue['text'] ?? '',
+                style: TextStyle(
+                  fontSize: w * 0.014,
+                  height: 1.35,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white
+                      : Colors.black,
+                  fontStyle: dialogue['type'] == 'narration'
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                ),
+                textAlign: dialogue['type'] == 'narration'
+                    ? TextAlign.center
+                    : TextAlign.left,
+              ),
+            ),
+          ),
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
           ],
-        ],
       ),
     );
   }

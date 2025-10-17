@@ -8,6 +8,7 @@ class GameState {
       ..addAll(List<Map<String, dynamic>>.from(recordsList));
   }
 
+  
   // Static lists to maintain state across screens
   static final List<Map<String, dynamic>> _records = [];
   static final List<Map<String, dynamic>> _cartItems = [];
@@ -109,7 +110,7 @@ class GameState {
         .any((item) => item['album'] == album && item['artist'] == artist);
   }
 
-  // ✅ Complete transaction: move all cart items into records
+  // Complete transaction: move all cart items into records
   static void completeTransaction() {
     for (var item in _cartItems) {
       final recordMap = {

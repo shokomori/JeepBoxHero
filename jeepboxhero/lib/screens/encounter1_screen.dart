@@ -1,12 +1,14 @@
 // lib/screens/encounter1_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import 'encounter_features/vinyl_table_screen.dart';
 import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter2_screen.dart';
 import '../components/ui/phone_save_load_popup.dart';
+import 'encounter_features/receipt_table_screen.dart';
 
 class Encounter1Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -31,7 +33,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     {
       'type': 'narration',
       'text':
-          '[Scene: Jeep Box Records – Hip-Hop Section]\n\nA man in baggy jeans and a snapback bounces into the shop, his steps like a freestyle beat. He throws a playful salute to Tito Ramon.',
+          'A man in baggy jeans bounces into the shop, his steps like a freestyle beat. He throws a playful salute to Tito Ramon.',
       'speaker': null,
     },
     {
@@ -52,13 +54,19 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
           'All I remember is the cover—loud, bold, like it was daring you to press play. That\'s the album that lit my fire.',
       'speaker': 'MC Luwalhati',
     },
+        {
+      'type': 'dialogue',
+      'text':
+          'All I remember is the cover—loud, bold, like it was daring you to press play. That\'s the album that lit my fire.',
+      'speaker': 'MC Luwalhati',
+    },
   ];
 
   final List<Map<String, dynamic>> _postChoiceDialogues = [
     {
       'type': 'narration',
       'text':
-          '• Navigate to the Hip-Hop section.\n• Look for a vibrant, graffiti-like cover featuring a man in shades.\n• This is the first album that brought Pinoy rap to the mainstream.',
+          '• Navigate to the Hip-Hop section.\n• Look for a vibrant, graffiti-like cover featuring a man in a suit.\n• This is the first album that brought Pinoy rap to the mainstream.',
       'speaker': null,
     },
   ];
@@ -86,7 +94,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
     {
       'type': 'narration',
       'text':
-          '[Narration]\n\nMC Luwalhati nods, tapping the vinyl like a drumbeat as he heads toward the door.',
+          'MC Luwalhati nods, tapping the vinyl like a drumbeat as he heads toward the door.',
       'speaker': null,
     },
     {
@@ -184,7 +192,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
           targetAlbumTitle: 'Yo!',
           targetAlbumArtist: 'Francis M',
           successNarration:
-              'You flip through hip-hop sleeves until a vibrant, graffiti-like cover emerges—a man in shades, looking unshakable.',
+              'You flip through hip-hop sleeves until a vibrant, graffiti-like cover emerges—a man in a suit, looking unshakable.',
           successDialogue:
               '"There it is. The first king of Pinoy rap. Still untouchable."',
           successSpeaker: 'MC Luwalhati',
@@ -335,8 +343,8 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              left: _customerExiting ? -w * 0.6 : w * 0.10,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              left: _customerExiting ? -w * 0.6 : w * 0.12,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.05,
               bottom: h * 0.28,
               child: Image.asset(
@@ -357,7 +365,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               width: w * 0.25,
               height: h * 0.40,
               child: Opacity(
-                opacity: 0.7,
+                opacity: 0.0,
                 child: Image.asset(
                   _isTitoSpeaking()
                       ? 'assets/characters/tito_ramon_speaking.png'
@@ -405,31 +413,55 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               ),
 
             // Folder
-            Positioned(
-              left: w * 0.03,
-              bottom: h * 0.05,
-              width: w * 0.38,
-              height: h * 0.46,
-              child: GestureDetector(
-                onTap: () => debugPrint('Folder tapped'),
-                child: Image.asset(
-                  'assets/ui/closed_folder.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.transparent);
-                  },
+                Positioned(
+                left: w * 0.00001,
+                bottom: h * 0.05,
+                width: w * 0.38,
+                height: h * 0.46,
+                child: GestureDetector(
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 1),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.transparent);
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Cash box
+            // Cash box (clickable only if album found)
             Positioned(
               right: -w * 0.15,
               bottom: -h * 0.03,
               width: w * 0.85,
               height: h * 0.65,
               child: GestureDetector(
-                onTap: () => debugPrint('Cash box tapped'),
+                onTap: _albumFound
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VinylTableScreen(encounterNumber: 1),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Image.asset(
                   'assets/ui/cash_box.png',
                   fit: BoxFit.contain,
@@ -691,10 +723,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
   Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.25),
-      padding: EdgeInsets.symmetric(
-        horizontal: w * 0.035,
-        vertical: h * 0.015,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
       decoration: BoxDecoration(
         color: dialogue['type'] == 'narration'
             ? Colors.black.withOpacity(0.75)
@@ -714,7 +743,7 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: dialogue['type'] == 'narration'
             ? CrossAxisAlignment.center
             : CrossAxisAlignment.start,
@@ -733,9 +762,8 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               overflow: TextOverflow.ellipsis,
             ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
-          // constrain and make dialogue text scrollable so the Column won't overflow
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: h * 0.16),
+          // allow the text area to flex when available height is small
+          Flexible(
             child: SingleChildScrollView(
               child: Text(
                 dialogue['text'] ?? '',
@@ -755,27 +783,26 @@ class _Encounter1ScreenState extends State<Encounter1Screen> {
               ),
             ),
           ),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '▼ Tap to continue',
-                style: TextStyle(
-                  fontSize: w * 0.011,
-                  color: dialogue['type'] == 'narration'
-                      ? Colors.white70
-                      : Colors.black54,
-                  fontStyle: FontStyle.italic,
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
                 ),
               ),
             ),
           ],
-        ],
       ),
     );
   }
-
+  
   Widget _buildDialogueOptions(double w, double h) {
     final options = [
       {'text': 'Sounds like the roots of it all.', 'value': 'A'},

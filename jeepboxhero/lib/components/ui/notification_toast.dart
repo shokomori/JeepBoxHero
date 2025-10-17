@@ -63,7 +63,7 @@ class NotificationToast extends PositionComponent {
     if (elapsed >= duration - 0.5) {
       final fadeAlpha = 1 - ((elapsed - (duration - 0.5)) / 0.5);
       opacity = fadeAlpha.clamp(0.0, 1.0);
-      // Update opacity of background and border
+      
       if (bg.paint.color.opacity != opacity) {
         bg.paint.color = backgroundColor.withOpacity(opacity);
         border.paint.color = Colors.white.withOpacity(opacity);

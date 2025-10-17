@@ -1,12 +1,14 @@
 // lib/screens/encounter8_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import 'encounter_features/vinyl_table_screen.dart';
 import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
 import 'package:jeepboxhero/screens/cart_screen.dart';
 import 'package:jeepboxhero/screens/encounter9_screen.dart';
 import '../components/ui/phone_save_load_popup.dart';
+import 'encounter_features/receipt_table_screen.dart';
 
 class Encounter8Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -28,7 +30,7 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
     {
       'type': 'narration',
       'text':
-          '[Scene: Jeep Box Records – Contemporary Ballads]\n\nA young woman with tearful eyes enters, clutching her arms to her chest.',
+          'A young woman with tearful eyes enters, clutching her arms to her chest.',
       'speaker': null,
     },
     {
@@ -55,8 +57,7 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
     {
       'type': 'narration',
       'text':
-          'The player flips through muted pastel covers until finding one that radiates quiet sorrow.',
-      'speaker': null,
+          '• Check the OPM/Acoustic section.\n• Look for a gentle cover—Moira facing forward, hair flowing softly around her.\n• It’s calm and sincere, like a quiet strength wrapped in melancholy.','speaker': null,
     },
   ];
 
@@ -70,18 +71,13 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
       'type': 'dialogue',
       'text': 'Either way, the record will understand.',
       'speaker': 'Tito Ramon',
-    },
-    {
-      'type': 'narration',
-      'text': 'She exits, a little lighter.',
-      'speaker': null,
-    },
+    }
   ];
 
   final List<Map<String, dynamic>> _finalDialogues = [
     {
       'type': 'narration',
-      'text': '[Narration]\n\nShe exits, a little lighter.',
+      'text': 'She exits, a little lighter.',
       'speaker': null,
     },
   ];
@@ -154,7 +150,7 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
           targetAlbumTitle: 'Malaya',
           targetAlbumArtist: 'Moira Dela Torre',
           successNarration:
-              'The player flips through muted pastel covers until finding one that radiates quiet sorrow.',
+              'The player flips through muted covers until finding one that radiates quiet sorrow.',
           successDialogue:
               '"Yes. This is it. Maybe I\'ll cry less with this, or maybe more."',
           successSpeaker: 'Mara',
@@ -294,7 +290,7 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
               left: _customerExiting ? -w * 0.6 : w * 0.12,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
@@ -303,11 +299,12 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
                     : 'assets/characters/mara.png',
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
-                  return Container(color: Colors.transparent);
-                },
-              ),
-            ),
-            // Table (restore missing table)
+              return Container(color: Colors.transparent);
+            },
+          ),
+        ),
+               
+        // Table
             Positioned(
               left: 0,
               right: 0,
@@ -321,22 +318,65 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
                 },
               ),
             ),
-            Positioned(
-              left: w * 0.03,
-              bottom: h * 0.05,
-              width: w * 0.38,
-              height: h * 0.46,
-              child: GestureDetector(
-                onTap: () => debugPrint('Folder tapped'),
-                child: Image.asset(
-                  'assets/ui/closed_folder.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.transparent);
-                  },
+            
+        // Cash box (clickable only if album found)
+        Positioned(
+          right: -w * 0.15,
+          bottom: -h * 0.03,
+          width: w * 0.85,
+          height: h * 0.65,
+          child: GestureDetector(
+            onTap: _albumFound
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VinylTableScreen(encounterNumber: 8),
+                      ),
+                    );
+                  }
+                : null,
+            child: Image.asset(
+              'assets/ui/cash_box.png',
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(color: Colors.transparent);
+              },
+            ),
+          ),
+        ),
+           // Folder
+                Positioned(
+                left: w * 0.00001,
+                bottom: h * 0.05,
+                width: w * 0.38,
+                height: h * 0.46,
+                child: GestureDetector(
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 8),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.transparent);
+                    },
+                  ),
                 ),
               ),
-            ),
             Positioned(
               right: -w * 0.15,
               bottom: -h * 0.03,
@@ -529,26 +569,28 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
     );
   }
 
-  Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
+    Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.25),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
       decoration: BoxDecoration(
-          color: dialogue['type'] == 'narration'
-              ? Colors.black.withOpacity(0.75)
-              : Colors.white.withOpacity(0.85),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: dialogue['type'] == 'narration'
-                  ? Colors.white70
-                  : Colors.black87,
-              width: 2.5),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ]),
+        color: dialogue['type'] == 'narration'
+            ? Colors.black.withOpacity(0.75)
+            : Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color:
+              dialogue['type'] == 'narration' ? Colors.white70 : Colors.black87,
+          width: 2.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: dialogue['type'] == 'narration'
@@ -556,41 +598,56 @@ class _Encounter8ScreenState extends State<Encounter8Screen> {
             : CrossAxisAlignment.start,
         children: [
           if (dialogue['speaker'] != null)
-            Text(dialogue['speaker'],
-                style: TextStyle(
-                    fontSize: w * 0.017,
-                    fontWeight: FontWeight.bold,
-                    color: dialogue['type'] == 'narration'
-                        ? Colors.white
-                        : Colors.black),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+            Text(
+              dialogue['speaker'],
+              style: TextStyle(
+                fontSize: w * 0.017,
+                fontWeight: FontWeight.bold,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
+          // allow the text area to flex when available height is small
           Flexible(
-              child: SingleChildScrollView(
-                  child: Text(dialogue['text'] ?? '',
-                      style: TextStyle(
-                          fontSize: w * 0.014,
-                          height: 1.35,
-                          color: dialogue['type'] == 'narration'
-                              ? Colors.white
-                              : Colors.black,
-                          fontStyle: dialogue['type'] == 'narration'
-                              ? FontStyle.italic
-                              : FontStyle.normal)))),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-                alignment: Alignment.centerRight,
-                child: Text('▼ Tap to continue',
-                    style: TextStyle(
-                        fontSize: w * 0.011,
-                        fontStyle: FontStyle.italic,
-                        color: dialogue['type'] == 'narration'
-                            ? Colors.white70
-                            : Colors.black54)))
+            child: SingleChildScrollView(
+              child: Text(
+                dialogue['text'] ?? '',
+                style: TextStyle(
+                  fontSize: w * 0.014,
+                  height: 1.35,
+                  color: dialogue['type'] == 'narration'
+                      ? Colors.white
+                      : Colors.black,
+                  fontStyle: dialogue['type'] == 'narration'
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                ),
+                textAlign: dialogue['type'] == 'narration'
+                    ? TextAlign.center
+                    : TextAlign.left,
+              ),
+            ),
+          ),
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
           ],
-        ],
       ),
     );
   }

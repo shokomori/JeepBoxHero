@@ -1,6 +1,7 @@
 // lib/screens/encounter5_screen.dart
 import 'package:flutter/material.dart';
 import '../managers/game_state.dart';
+import 'encounter_features/vinyl_table_screen.dart';
 import '../managers/audio_manager.dart';
 import './shelves_screen.dart';
 import 'package:jeepboxhero/screens/records_screen.dart';
@@ -8,6 +9,7 @@ import 'package:jeepboxhero/screens/cart_screen.dart';
 // Navigate to next encounter (Encounter 6)
 import 'package:jeepboxhero/screens/encounter6_screen.dart';
 import '../components/ui/phone_save_load_popup.dart';
+import 'encounter_features/receipt_table_screen.dart';
 
 class Encounter5Screen extends StatefulWidget {
   final Map<String, dynamic>? progress;
@@ -28,8 +30,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
   final List<Map<String, dynamic>> _dialogues = [
     {
       'type': 'narration',
-      'text':
-          '[Scene: Jeep Box Records – Classics & Kundiman Section]\n\nAn elegant older woman enters, her poise undimmed by age.',
+      'text': 'An elegant older woman enters, her poise undimmed by age.',
       'speaker': null,
     },
     {
@@ -50,13 +51,19 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
           'The cover was modest—just her portrait, smiling gently, as if she knew the weight she carried. That\'s the one.',
       'speaker': 'Aling Fe',
     },
+        {
+      'type': 'dialogue',
+      'text':
+          'The cover was modest—just her portrait, smiling gently, as if she knew the weight she carried. That\'s the one.',
+      'speaker': 'Aling Fe',
+    },
   ];
 
   final List<Map<String, dynamic>> _postChoiceDialogues = [
     {
       'type': 'narration',
       'text':
-          '• Check the Classics & Kundiman section.\n• Look for a graceful portrait cover—a young woman poised with elegance.\n• A modest cover with her smiling gently.',
+          '• Check the Classics section.\n• Look for a graceful portrait cover—a young woman poised with elegance.\n• A modest cover with her smiling gently.',
       'speaker': null,
     },
   ];
@@ -169,7 +176,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               '"Still as radiant as I remember. A voice that never ages."',
           successSpeaker: 'Aling Fe',
           wrongAlbumHint:
-              'Look for a modest portrait cover with a graceful smile in the Classics & Kundiman section.',
+              'Look for a modest portrait cover with a graceful smile in the Classics section.',
         ),
       ),
     );
@@ -321,7 +328,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
               left: _customerExiting ? -w * 0.6 : w * 0.12,
-              right: _customerExiting ? w * 1.2 : w * 0.30,
+              right: _customerExiting ? w * 1.2 : w * 0.50,
               top: h * 0.06,
               bottom: h * 0.28,
               child: Image.asset(
@@ -342,7 +349,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               width: w * 0.25,
               height: h * 0.40,
               child: Opacity(
-                opacity: 0.7,
+                opacity: 0.0,
                 child: Image.asset(
                   _isTitoSpeaking()
                       ? 'assets/characters/tito_ramon_speaking.png'
@@ -389,32 +396,56 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
                 ),
               ),
 
-            // Folder
-            Positioned(
-              left: w * 0.03,
-              bottom: h * 0.05,
-              width: w * 0.38,
-              height: h * 0.46,
-              child: GestureDetector(
-                onTap: () => debugPrint('Folder tapped'),
-                child: Image.asset(
-                  'assets/ui/closed_folder.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: Colors.transparent);
-                  },
+          // Folder
+                Positioned(
+                left: w * 0.00001,
+                bottom: h * 0.05,
+                width: w * 0.38,
+                height: h * 0.46,
+                child: GestureDetector(
+                  onTap: _albumFound
+                      ? () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReceiptTableScreen(encounterNumber: 5),
+                            ),
+                          );
+                          if (result == 'purchase_complete' && mounted) {
+                            setState(() {
+                              _transactionComplete = true;
+                              _dialogueIndex = 0;
+                            });
+                          }
+                        }
+                      : null,
+                  child: Image.asset(
+                    'assets/ui/closed_folder.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(color: Colors.transparent);
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Cash box
+            // Cash box (clickable only if album found)
             Positioned(
               right: -w * 0.15,
               bottom: -h * 0.03,
               width: w * 0.85,
               height: h * 0.65,
               child: GestureDetector(
-                onTap: () => debugPrint('Cash box tapped'),
+                onTap: _albumFound
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VinylTableScreen(encounterNumber: 5),
+                          ),
+                        );
+                      }
+                    : null,
                 child: Image.asset(
                   'assets/ui/cash_box.png',
                   fit: BoxFit.contain,
@@ -659,7 +690,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
     );
   }
 
-  Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
+    Widget _buildDialogueBox(Map<String, dynamic> dialogue, double w, double h) {
     return Container(
       constraints: BoxConstraints(maxHeight: h * 0.25),
       padding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
@@ -701,6 +732,7 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               overflow: TextOverflow.ellipsis,
             ),
           if (dialogue['speaker'] != null) SizedBox(height: h * 0.006),
+          // allow the text area to flex when available height is small
           Flexible(
             child: SingleChildScrollView(
               child: Text(
@@ -721,23 +753,22 @@ class _Encounter5ScreenState extends State<Encounter5Screen> {
               ),
             ),
           ),
-          if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1)) ...[
-            SizedBox(height: h * 0.006),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '▼ Tap to continue',
-                style: TextStyle(
-                  fontSize: w * 0.011,
-                  color: dialogue['type'] == 'narration'
-                      ? Colors.white70
-                      : Colors.black54,
-                  fontStyle: FontStyle.italic,
+ if (_showContinue && !(_dialogueIndex >= _dialogues.length - 1))
+          Positioned(
+            right: w * 0.01,
+            bottom: h * 0.01,
+            child: Text(
+              '▼ Tap to continue',
+              style: TextStyle(
+                fontSize: w * 0.011,
+                color: dialogue['type'] == 'narration'
+                    ? Colors.white70
+                    : Colors.black54,
+                fontStyle: FontStyle.italic,
                 ),
               ),
             ),
           ],
-        ],
       ),
     );
   }

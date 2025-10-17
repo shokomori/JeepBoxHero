@@ -57,7 +57,7 @@ class SaveStateManager {
   SaveStateManager._internal();
 
   final _supabase = Supabase.instance.client;
-  final String _table = 'save_states'; // You must create this table in Supabase
+  final String _table = 'save_states'; 
 
   Future<void> saveState({
     required String encounter,

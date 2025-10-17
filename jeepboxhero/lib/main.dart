@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'components/ui/phone_save_load_popup.dart';
 import 'screens/encounter2_screen.dart';
 // lib/main.dart
@@ -13,8 +14,13 @@ const supabaseKey =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    // Force landscape orientation
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
 
-  // ✅ Initialize Supabase first (before anything else that depends on it)
+  // Initialize Supabase first (before anything else that depends on it)
   try {
     await Supabase.initialize(
       url: supabaseUrl,
@@ -29,7 +35,7 @@ Future<void> main() async {
     print('❌ Supabase initialization failed: $e');
   }
 
-  // ✅ Initialize audio manager (non-blocking but inside try/catch)
+  // Initialize audio manager (non-blocking but inside try/catch)
   try {
     await AudioManager().initialize();
   } catch (e) {
@@ -151,17 +157,15 @@ class _MainMenuScreenState extends State<MainMenuScreen>
         progress: {},
         onLoad: (loadedState) {
           if (loadedState != null) {
-            // You can route to the correct encounter here
+            
             final encounter = loadedState['encounter'] ?? 'shop';
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) {
-                  // Route to the correct screen based on encounter
-                  // You can expand this logic for all encounters
                   if (encounter == 'encounter2') {
                     return const Encounter2Screen();
                   }
-                  // Add more encounter screens as needed
+          
                   return ShopScreen();
                 },
               ),
@@ -352,7 +356,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                                 onTap: () {
                                   if (index == 0) _startNarration();
                                   if (index == 1) _onContinueTap();
-                                  if (index == 2) widget.onQuit?.call();
+                                  if (index == 2) SystemNavigator.pop();
                                 },
                                 child: Image.asset(
                                   buttonFiles[index],

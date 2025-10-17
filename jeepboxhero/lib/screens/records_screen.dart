@@ -19,7 +19,7 @@ class RecordsScreen extends StatelessWidget {
           // Background
           Positioned.fill(
             child: Image.asset(
-              'assets/backgrounds/table_down_left.png',
+              'assets/backgrounds/preview_album.png',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
@@ -51,7 +51,7 @@ class RecordsScreen extends StatelessWidget {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.0),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
@@ -72,48 +72,55 @@ class RecordsScreen extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 14),
+                          margin: const EdgeInsets.only(right: 10), 
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: 18, vertical: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD2691E).withOpacity(0.95),
-                            borderRadius: BorderRadius.circular(16),
+                            color: const Color(0xFFFF0000),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: const Color(0xFFFFD700), width: 3),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                                color: Colors.black.withOpacity(0.25),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.album,
-                                  color: Colors.white, size: 28),
-                              const SizedBox(width: 12),
+                              const Icon(Icons.local_offer, color: Colors.yellow, size: 26),
+                              const SizedBox(width: 10),
                               Text(
-                                'Record Collection',
+                                'RECORD SALES',
                                 style: TextStyle(
-                                  fontSize: w * 0.055,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: w * 0.048,
+                                  fontWeight: FontWeight.w900,
                                   color: Colors.white,
-                                  letterSpacing: 0.5,
+                                  letterSpacing: 1.2,
+                                  fontFamily: 'RobotoCondensed', 
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withOpacity(0.4),
+                                      blurRadius: 4,
+                                      offset: const Offset(1, 2),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 10),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.25),
-                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.yellow,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   '${records.length}',
                                   style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.red,
                                   ),
                                 ),
                               ),
@@ -121,22 +128,22 @@ class RecordsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+
                     ],
                   ),
                 ),
-
                 // Records Grid
                 Expanded(
                   child: records.isEmpty
                       ? Center(
                           child: Container(
-                            padding: const EdgeInsets.all(32),
+                            padding: const EdgeInsets.only(right: 50 ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withOpacity(0.0),
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withOpacity(0.0),
                                   blurRadius: 16,
                                   offset: const Offset(0, 4),
                                 ),
@@ -148,7 +155,7 @@ class RecordsScreen extends StatelessWidget {
                                 Icon(
                                   Icons.library_music_outlined,
                                   size: 80,
-                                  color: Colors.brown.withOpacity(0.4),
+                                  color: Colors.brown.withOpacity(0.9),
                                 ),
                                 const SizedBox(height: 16),
                                 const Text(
@@ -164,7 +171,7 @@ class RecordsScreen extends StatelessWidget {
                                   'Start exploring to find vinyl records!',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.brown.withOpacity(0.7),
+                                    color: const Color(0xFF8B4513).withOpacity(1.0),
                                   ),
                                 ),
                               ],
@@ -209,6 +216,7 @@ class RecordsScreen extends StatelessWidget {
           ),
         ],
       ),
+
     );
   }
 }
@@ -227,78 +235,73 @@ class _RecordCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        margin: const EdgeInsets.all(6), 
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          // color: Colors.white,
+          border: Border.all(
+            color: const Color(0xFFD2691E).withOpacity(0.4),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Album Cover
+            // Album Cover — no white border, fits fully
             Expanded(
               flex: 7,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
+              child: SizedBox.expand(
+                child: Image.asset(
+                  record['imagePath'] ?? '',
+                  fit: BoxFit.cover, // ensures full cover
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: const Color(0xFFD2691E).withOpacity(0.15),
+                    child: const Icon(
+                      Icons.album,
+                      size: 50,
+                      color: Color(0xFFD2691E),
+                    ),
+                  ),
                 ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      record['imagePath'] ?? '',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: const Color(0xFFD2691E).withOpacity(0.2),
-                        child: const Icon(
-                          Icons.album,
-                          size: 50,
-                          color: Color(0xFFD2691E),
-                        ),
-                      ),
+              ),
+            ),
+
+            // Subtle gloss overlay
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withOpacity(0.1),
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.08),
+                      ],
                     ),
-                    // Vinyl shine effect
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.white.withOpacity(0.2),
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.1),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
 
             // Album Info
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF8DC),
-                  borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(16),
-                  ),
+                  color: const Color(0xFFFFF5D7),
                   border: Border(
                     top: BorderSide(
-                      color: const Color(0xFFD2691E).withOpacity(0.3),
-                      width: 2,
+                      color: const Color(0xFFD2691E).withOpacity(0.4),
+                      width: 1.5,
                     ),
                   ),
                 ),
@@ -308,21 +311,23 @@ class _RecordCard extends StatelessWidget {
                     Text(
                       record['album'] ?? '',
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        color: Color(0xFF8B4513),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14.5,
+                        color: Color(0xFF4B2C10),
+                        letterSpacing: 0.4,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       record['artist'] ?? '',
                       style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.brown.withOpacity(0.7),
-                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: const Color(0xFF8B4513).withOpacity(0.85),
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -338,6 +343,7 @@ class _RecordCard extends StatelessWidget {
     );
   }
 }
+
 
 class AlbumDetailScreen extends StatelessWidget {
   final Map<String, dynamic> record;
@@ -363,7 +369,7 @@ class AlbumDetailScreen extends StatelessWidget {
           // Background
           Positioned.fill(
             child: Image.asset(
-              'assets/backgrounds/table_down_left.png',
+              'assets/backgrounds/preview_album.png',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(color: const Color(0xFFD2B48C));
@@ -381,9 +387,9 @@ class AlbumDetailScreen extends StatelessWidget {
                 children: [
                   // Left side: Info card
                   Flexible(
-                    flex: 24,
+                    flex: 40,
                     child: Container(
-                      constraints: BoxConstraints(maxHeight: h * 0.6),
+                      constraints: BoxConstraints(maxHeight: h * 3.5),
                       child: Image.asset(
                         'assets/albums/${baseName}_info.png',
                         fit: BoxFit.contain,
@@ -397,7 +403,7 @@ class AlbumDetailScreen extends StatelessWidget {
                                 width: 3,
                               ),
                             ),
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -432,7 +438,7 @@ class AlbumDetailScreen extends StatelessWidget {
 
                   // Center: Enlarged vinyl with album cover (with play button underneath)
                   Flexible(
-                    flex: 44,
+                    flex: 47,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -525,11 +531,11 @@ class AlbumDetailScreen extends StatelessWidget {
                   ),
 
                   // Right side: Tracklist card
-                  Flexible(
-                    flex: 32,
+                  SizedBox(
+                    height: h * 0.75, 
                     child: ClipRect(
                       child: Container(
-                        constraints: BoxConstraints(maxHeight: h * 0.75),
+                        constraints: BoxConstraints(maxHeight: h * .75),
                         padding: EdgeInsets.symmetric(horizontal: w * 0.01),
                         child: Center(
                           child: SizedBox(
@@ -580,7 +586,7 @@ class AlbumDetailScreen extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.0),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(

@@ -134,10 +134,10 @@ class _CartScreenState extends State<CartScreen> {
           /// ALBUM IMAGE ON TABLE
           if (cartItems.isNotEmpty && !_showReceipt)
             Positioned(
-              left: w * 0.08,
-              bottom: h * 0.18,
-              width: w * 0.15,
-              height: w * 0.15,
+              left: w * 0.07,
+              bottom: h * 0.10,
+              width: w * 0.4,
+              height: w * 0.4,
               child: Image.asset(
                 cartItems[0]['imagePath'] ?? 'assets/albums/default_album.png',
                 fit: BoxFit.contain,
@@ -176,6 +176,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
 
+        
           /// BACK BUTTON
           Positioned(
             left: 16,
@@ -185,7 +186,7 @@ class _CartScreenState extends State<CartScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.0),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -195,10 +196,25 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.arrow_back, size: 28),
+                child: Image.asset(
+                  'assets/ui/back_arrow.png',
+                  width: w * 0.055,
+                  height: w * 0.055,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: w * 0.055,
+                      height: w * 0.055,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
+
 
           /// MAIN INTERFACE — Receipt Book Form
           if (!_showReceipt)
@@ -499,7 +515,7 @@ class _CartScreenState extends State<CartScreen> {
                           color: Colors.green[600],
                           size: 80,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 15),
                         const Text(
                           'Purchase Complete!',
                           style: TextStyle(
